@@ -338,17 +338,3 @@ pyinstaller --onefile --noconsole --name clap_assistant_pro main.py
 
 ---
 
-## README — uso rápido
-
-* Edite `config.json` para mapear ações e ajustar sensibilidade.
-* Teste localmente rodando `python main.py`.
-* Quando ok, gere `.exe` e coloque na pasta de inicialização.
-
----
-
-Se quiser, eu posso:
-
-* Gerar todos esses arquivos prontos e te enviar (cópia do conteúdo aqui).
-* Ou gerar o executável aqui para você baixar (se me autorizar a criar o .exe).
-
-Qual opção prefere?
