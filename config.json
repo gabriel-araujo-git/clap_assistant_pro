@@ -1,0 +1,11 @@
+{
+  "samplerate": 44100,
+  "chunk_duration": 0.08,
+  "base_threshold": 0.28,
+  "cooldown": 1.8,
+  "actions": {
+    "1_clap": {"type": "builtin", "cmd": "abrir_vscode"},
+    "2_claps": {"type": "builtin", "cmd": "abrir_navegador"},
+    "3_claps": {"type": "builtin", "cmd": "bloquear_pc"}
+  }
+}
