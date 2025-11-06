@@ -82,7 +82,7 @@ class CommandEngine:
 
     def open_ln(self) -> str:
         # ajuste o caminho se necessário
-        ln_path = r"C:\LnStudio\eclipse\eclipse.exe"
+        ln_path = r"C:\LnStudio\eclipse.exe"
         if os.path.exists(ln_path):
             subprocess.Popen(ln_path, shell=True)
             return "🦾 Abrindo LN Studio..."
