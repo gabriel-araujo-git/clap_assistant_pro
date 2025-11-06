@@ -26,7 +26,7 @@ class CommandEngine:
 
         # sites fixos
         self.commands.update({
-            # Redes sociais
+            # 🌐 Redes sociais
             ("abrir instagram", "instagram", "insta"): lambda: self.open_site("https://www.instagram.com"),
             ("abrir facebook", "facebook", "face", "fb"): lambda: self.open_site("https://www.facebook.com"),
             ("abrir twitter", "twitter", "x", "x.com"): lambda: self.open_site("https://x.com"),
@@ -38,7 +38,7 @@ class CommandEngine:
             ("abrir reddit", "reddit", "rdt"): lambda: self.open_site("https://www.reddit.com"),
             ("abrir snapchat", "snapchat", "snap"): lambda: self.open_site("https://www.snapchat.com"),
 
-            # Streaming e música
+            # 🎬 Streaming e música
             ("abrir youtube", "youtube", "yt"): lambda: self.open_site("https://www.youtube.com"),
             ("abrir netflix", "netflix", "nfx"): lambda: self.open_site("https://www.netflix.com"),
             ("abrir spotify", "spotify", "spot"): lambda: self.open_site("https://www.spotify.com"),
@@ -50,7 +50,7 @@ class CommandEngine:
             ("abrir paramount plus", "paramountplus", "paramount"): lambda: self.open_site("https://www.paramountplus.com"),
             ("abrir star plus", "starplus", "star+"): lambda: self.open_site("https://www.starplus.com"),
 
-            # Produtividade e trabalho
+            # 💼 Produtividade
             ("abrir google drive", "drive", "gdrive"): lambda: self.open_site("https://drive.google.com"),
             ("abrir google docs", "docs", "gdocs"): lambda: self.open_site("https://docs.google.com"),
             ("abrir notion", "notion"): lambda: self.open_site("https://www.notion.so"),
@@ -62,7 +62,7 @@ class CommandEngine:
             ("abrir dropbox", "dropbox"): lambda: self.open_site("https://www.dropbox.com"),
             ("abrir google agenda", "calendar", "agenda"): lambda: self.open_site("https://calendar.google.com"),
 
-            # Bancos e pagamentos
+            # 💰 Bancos e pagamentos
             ("abrir nubank", "nubank", "nu"): lambda: self.open_site("https://nubank.com.br"),
             ("abrir itau", "itau"): lambda: self.open_site("https://www.itau.com.br"),
             ("abrir banco do brasil", "bb", "bancobb"): lambda: self.open_site("https://www.bb.com.br"),
@@ -74,7 +74,7 @@ class CommandEngine:
             ("abrir banco inter", "inter"): lambda: self.open_site("https://inter.co"),
             ("abrir banco pan", "pan"): lambda: self.open_site("https://www.bancopan.com.br"),
 
-            # Estudos e pesquisa
+            # 🧠 Estudos e pesquisa
             ("abrir chatgpt", "chatgpt", "gpt"): lambda: self.open_site("https://chat.openai.com"),
             ("abrir google scholar", "scholar", "acadêmico"): lambda: self.open_site("https://scholar.google.com"),
             ("abrir khan academy", "khanacademy", "khan"): lambda: self.open_site("https://www.khanacademy.org"),
@@ -85,6 +85,33 @@ class CommandEngine:
             ("abrir perplexity", "perplexity"): lambda: self.open_site("https://www.perplexity.ai"),
             ("abrir codecademy", "codecademy"): lambda: self.open_site("https://www.codecademy.com"),
             ("abrir tradutor", "translate", "google tradutor"): lambda: self.open_site("https://translate.google.com"),
+
+            # ⚙️ Programas internos
+            ("abrir bloco de notas", "notepad", "bloco"): lambda: subprocess.Popen("notepad.exe", shell=True),
+            ("abrir calculadora", "calc", "calculadora"): lambda: subprocess.Popen("calc.exe", shell=True),
+            ("abrir paint", "paint", "pintar"): lambda: subprocess.Popen("mspaint.exe", shell=True),
+            ("abrir explorador", "explorer", "explorar"): lambda: subprocess.Popen("explorer.exe", shell=True),
+            ("abrir prompt", "cmd", "prompt"): lambda: subprocess.Popen("cmd.exe", shell=True),
+            ("abrir powershell", "powershell"): lambda: subprocess.Popen("powershell.exe", shell=True),
+            ("abrir word", "word"): lambda: subprocess.Popen("winword.exe", shell=True),
+            ("abrir excel", "excel", "planilha"): lambda: subprocess.Popen("excel.exe", shell=True),
+            ("abrir powerpoint", "powerpoint", "ppt"): lambda: subprocess.Popen("powerpnt.exe", shell=True),
+            ("abrir vscode", "vscode", "code", "vs"): lambda: subprocess.Popen("code", shell=True),
+            ("abrir navegador", "chrome", "browser"): lambda: subprocess.Popen("chrome", shell=True),
+            ("abrir painel de controle", "control", "painel"): lambda: subprocess.Popen("control.exe", shell=True),
+            ("abrir task manager", "gerenciador", "tarefas", "taskmgr"): lambda: subprocess.Popen("taskmgr.exe", shell=True),
+            ("abrir config", "configurações", "settings"): lambda: subprocess.Popen("start ms-settings:", shell=True),
+
+            # 🔒 Atalhos de sistema
+            ("bloquear computador", "bloquear", "lock"): lambda: os.system("rundll32.exe user32.dll,LockWorkStation"),
+            ("reiniciar computador", "reiniciar", "restart", "reboot"): lambda: os.system("shutdown /r /t 0"),
+            ("desligar computador", "desligar", "shutdown", "poweroff"): lambda: os.system("shutdown /s /t 0"),
+            ("hibernar", "suspender", "sleep"): lambda: os.system("shutdown /h"),
+            ("abrir downloads", "downloads"): lambda: subprocess.Popen(f"explorer.exe {os.path.expanduser('~/Downloads')}", shell=True),
+            ("abrir documentos", "documentos"): lambda: subprocess.Popen(f"explorer.exe {os.path.expanduser('~/Documents')}", shell=True),
+            ("abrir imagens", "imagens", "pictures"): lambda: subprocess.Popen(f"explorer.exe {os.path.expanduser('~/Pictures')}", shell=True),
+            ("abrir vídeos", "videos", "movies"): lambda: subprocess.Popen(f"explorer.exe {os.path.expanduser('~/Videos')}", shell=True),
+            ("abrir área de trabalho", "desktop"): lambda: subprocess.Popen(f"explorer.exe {os.path.expanduser('~/Desktop')}", shell=True),
         })
 
 
