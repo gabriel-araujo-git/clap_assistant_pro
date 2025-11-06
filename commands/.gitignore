@@ -1,0 +1,51 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- Virtualenv / venv ---
+venv/
+.env/
+.env.bak/
+env/
+.venv/
+
+# --- IDEs ---
+.vscode/
+.idea/
+*.code-workspace
+
+# --- Logs e temporários ---
+*.log
+*.tmp
+*.bak
+*.swp
+
+# --- Configuração de sistema ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Arquivos de build/distribuição ---
+build/
+dist/
+*.egg-info/
+*.spec
+
+# --- PyInstaller ---
+*.manifest
+*.spec
+
+# --- Configs locais do projeto ---
+config.json
+settings.json
+
+# --- Backup de execução local ---
+# (caso você gere logs ou backups do assistant)
+backup_*/
+output_*/
+*.db
+
+# --- Pystray ---
+# Caso gere ícones temporários
+icon_temp_*
