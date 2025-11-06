@@ -11,7 +11,7 @@ class CommandEngine:
             ("abrir ln", "ln", "studio ln", "lnstudio", "aln", "lnstd", "std"): self.open_ln,
 
             # LN Teste
-            ("abrir ln teste", "ln teste", "alnteste", "teste ln", "lntst"): self.open_ln_tst,
+            ("abrir ln teste", "ln teste", "alnteste", "teste ln", "lntst", "tst"): self.open_ln_tst,
 
             # LN Produção
             ("abrir ln prd", "ln prd", "alnprd", "lnprod", "ln produção", "prd ln"): self.open_ln_prd,
@@ -32,8 +32,15 @@ class CommandEngine:
 
     # --- Ações principais ---
     def open_vscode(self):
-        subprocess.Popen("code")
+        try:
+            subprocess.Popen("code")
+        except FileNotFoundError:
+            subprocess.Popen(
+                r"C:\Users\107457\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Visual Studio Code\Visual Studio Code.lnk",
+                shell=True
+            )
         return "Abrindo VSCode..."
+
 
     def open_ln(self):
         subprocess.Popen(r"C:\LnStudio\eclipse\eclipse.exe")
