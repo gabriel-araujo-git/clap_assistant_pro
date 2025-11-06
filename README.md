@@ -1,119 +1,134 @@
-# Lynx Assistant
+# 🦊 Lynx — Desktop Assistant Open Source
 
-O **Lynx Assistant** é um assistente pessoal inteligente projetado para
-otimizar fluxos de trabalho no Windows. Com uma interface leve e
-moderna, o Lynx permite executar comandos de automação diretamente por
-texto, abrindo aplicações e sites corporativos instantaneamente.
+O **Lynx** é um assistente desktop leve, rápido e personalizável, criado para simplificar tarefas do dia a dia de desenvolvedores e analistas.  
+Com uma interface minimalista construída em **CustomTkinter**, o Lynx interpreta **comandos de texto naturais** e executa ações locais ou na web — como abrir o VSCode, o LN Studio ou ambientes de teste e produção.
 
-------------------------------------------------------------------------
+> 🚀 Um projeto open source que combina **automação pessoal**, **UX minimalista** e **customização simples via Python**.
 
-## 🚀 Visão Geral
+---
 
-Desenvolvido em **Python** com **CustomTkinter**, **PyStray** e
-integração nativa com o sistema operacional, o Lynx Assistant foi criado
-para rodar discretamente em segundo plano, acessível a qualquer momento
-a partir da bandeja do sistema.
+## 🌟 Principais Recursos
 
-Ideal para profissionais que trabalham em ambientes corporativos com
-múltiplas ferramentas e precisam de acesso rápido a sistemas internos
-como o *Infor LN Studio*, portais web e IDEs.
+- 🔹 **Interface leve e intuitiva** — uma janela compacta com modo escuro e feedback instantâneo.
+- 🔹 **Comandos naturais** — digite “abrir vscode”, “ln teste”, “chrome” ou sinônimos equivalentes.
+- 🔹 **Personalização total** — adicione novos comandos ou sinônimos editando uma única classe (`CommandEngine`).
+- 🔹 **Integração com bandeja do sistema** — o Lynx fica sempre acessível, sem ocupar espaço na tela.
+- 🔹 **Execução segura e local** — nenhum dado é enviado para servidores externos.
+- 🔹 **Código 100% open source** — modifique, contribua e compartilhe.
 
-------------------------------------------------------------------------
+---
 
-## 🧠 Recursos Principais
+## 💡 Exemplo de Uso
 
--   Interface moderna e compacta (CustomTkinter)
--   Execução rápida de comandos personalizados
--   Ícone na bandeja do sistema (PyStray)
--   Atalhos e sinônimos para comandos
--   Compatível com Windows 10 e 11
+Após iniciar o Lynx:
 
-------------------------------------------------------------------------
+1. Digite no campo de entrada:
+   ```
+   ln teste
+   ```
+2. O Lynx abrirá automaticamente o ambiente de testes configurado.
+3. Tente também:
+   ```
+   vscode
+   ln prd
+   navegador
+   bloco de notas
+   ```
 
-## 🗣️ Comandos Disponíveis
+> Cada comando possui **sinônimos configuráveis**, permitindo variações como “abrir ln teste” ou “abrir vs”.
 
-  ------------------------------------------------------------------------
-  Categoria            Comando Principal              Sinônimos
-  -------------------- ------------------------------ --------------------
-  **VSCode**           abrir vscode                   vscode, code, vs
+---
 
-  **LN Studio**        abrir ln                       ln, studio ln,
-                                                      lnstudio, aln,
-                                                      lnstd, std
+## ⚙️ Instalação e Execução
 
-  **LN Teste**         abrir ln teste                 ln teste, alnteste,
-                                                      teste ln, lntst
+### 🐍 Pré-requisitos
+- Python **3.9+**
+- Pip instalado
 
-  **LN Produção**      abrir ln prd                   ln prd, alnprd,
-                                                      lnprod, ln produção,
-                                                      prd ln
+### 📦 Dependências
+Instale as dependências com:
+```bash
+pip install customtkinter pystray pillow
+```
 
-  **Navegador**        abrir navegador                abrir chrome,
-                                                      navegador, chrome,
-                                                      abrir web
-  ------------------------------------------------------------------------
+### ▶️ Executando o Lynx
+No terminal:
+```bash
+python assistant_ui.py
+```
 
-------------------------------------------------------------------------
+O Lynx iniciará em modo janela e ficará disponível na **bandeja do sistema** (System Tray).  
+Você pode ocultar ou reabrir a interface a qualquer momento.
 
-## ⚙️ Instalação
+---
 
-1.  Instale o Python 3.12 ou superior.
+## 🧠 Estrutura do Projeto
 
-2.  Instale as dependências:
+```
+lynx/
+├── assistant_ui.py     # Código principal (UI + Engine)
+├── README.md           # Este arquivo
+└── requirements.txt    # Dependências (opcional)
+```
 
-    ``` bash
-    pip install customtkinter pystray pillow
-    ```
+### Componentes:
+- **CommandEngine** → Gerencia comandos, sinônimos e ações.
+- **LynxApp** → Interface principal construída com `customtkinter`.
+- **Tray Icon** → Ícone residente que permite abrir/fechar o app rapidamente.
 
-3.  Execute o arquivo principal:
+---
 
-    ``` bash
-    python assistant_ui.py
-    ```
+## 🧩 Adicionando Novos Comandos
 
-4.  O Lynx Assistant será iniciado e ficará visível na bandeja do
-    sistema.
+Quer expandir o Lynx?  
+Edite a classe `CommandEngine` no arquivo `assistant_ui.py`:
 
-------------------------------------------------------------------------
+```python
+("abrir spotify", "spotify", "abrir música"): self.open_spotify
+```
 
-## 💡 Dicas de Uso
+E defina a função correspondente:
+```python
+def open_spotify(self):
+    subprocess.Popen("spotify", shell=True)
+    return "🎵 Abrindo Spotify..."
+```
 
--   O campo de entrada aceita variações dos comandos (sinônimos).
--   A janela pode ser minimizada; o ícone permanecerá ativo na bandeja.
--   Pode ser configurado para iniciar junto com o Windows (opcional).
+Pronto! O Lynx agora entende esse novo comando.
 
-------------------------------------------------------------------------
+---
 
-## 🧩 Estrutura do Projeto
+## 🤝 Contribuindo
 
-    LynxAssistant/
-    ├── assistant_ui.py      # Interface gráfica principal
-    ├── command_engine.py    # Mecanismo de execução de comandos
-    ├── assets/              # Ícones e imagens
-    ├── README.md            # Documentação
-    └── .gitignore           # Ignora arquivos temporários
+Contribuições são muito bem-vindas!  
+Para colaborar:
 
-------------------------------------------------------------------------
+1. Faça um **fork** do repositório  
+2. Crie uma branch com sua feature:
+   ```bash
+   git checkout -b feature/nome-da-feature
+   ```
+3. Faça o commit das alterações:
+   ```bash
+   git commit -m "Adiciona comando Spotify"
+   ```
+4. Envie um **Pull Request**
 
-## 🧰 Tecnologias
+> Antes de enviar, mantenha o código limpo e siga o estilo existente (PEP8 + emoji feedbacks nos retornos).
 
--   Python 3.12+\
--   CustomTkinter\
--   PyStray\
--   Pillow
+---
 
-------------------------------------------------------------------------
+## 🧭 Roadmap (Ideias Futuras)
 
-## 📘 Licença
+- 🔸 Reconhecimento de voz (speech-to-text)
+- 🔸 Histórico persistente de comandos
+- 🔸 Temas customizáveis
+- 🔸 Plugins externos em Python
+- 🔸 Integração com APIs locais (ex: Git, Docker, Jira)
 
-Distribuído sob a licença **MIT**.\
-© 2025 Microsoft Style Project --- inspirado em experiências de
-produtividade corporativa.
+---
 
-------------------------------------------------------------------------
+## 📜 Licença
 
-## 👨‍💻 Autor
-
-**Gabriel Araújo**\
-Desenvolvedor de soluções em Inteligência Artificial e automação de
-fluxos de trabalho.
+Distribuído sob a licença **MIT**.  
+Você é livre para usar, modificar e distribuir — apenas mantenha os créditos ao projeto.
