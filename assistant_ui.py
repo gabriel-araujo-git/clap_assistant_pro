@@ -26,13 +26,67 @@ class CommandEngine:
 
         # sites fixos
         self.commands.update({
+            # Redes sociais
+            ("abrir instagram", "instagram", "insta"): lambda: self.open_site("https://www.instagram.com"),
+            ("abrir facebook", "facebook", "face", "fb"): lambda: self.open_site("https://www.facebook.com"),
+            ("abrir twitter", "twitter", "x", "x.com"): lambda: self.open_site("https://x.com"),
+            ("abrir tiktok", "tiktok", "tt"): lambda: self.open_site("https://www.tiktok.com"),
+            ("abrir whatsapp", "whatsapp", "zap"): lambda: self.open_site("https://web.whatsapp.com"),
+            ("abrir discord", "discord", "dc"): lambda: self.open_site("https://discord.com"),
+            ("abrir telegram", "telegram", "tg"): lambda: self.open_site("https://web.telegram.org"),
+            ("abrir linkedin", "linkedin", "lnkd"): lambda: self.open_site("https://www.linkedin.com"),
+            ("abrir reddit", "reddit", "rdt"): lambda: self.open_site("https://www.reddit.com"),
+            ("abrir snapchat", "snapchat", "snap"): lambda: self.open_site("https://www.snapchat.com"),
+
+            # Streaming e música
             ("abrir youtube", "youtube", "yt"): lambda: self.open_site("https://www.youtube.com"),
-            ("abrir google", "google", "search", "pesquisa"): lambda: self.open_site("https://www.google.com"),
-            ("abrir netflix", "netflix", "nfx", "n"): lambda: self.open_site("https://www.netflix.com"),
-            ("abrir github", "github", "git", "gtb"): lambda: self.open_site("https://www.github.com"),
-            ("abrir chatgpt", "chatgpt", "cgpt", "gpt"): lambda: self.open_site("https://chat.openai.com"),
-            ("abrir outlook", "outlook", "email", "mail", "msmail"): lambda: self.open_site("https://outlook.live.com"),
+            ("abrir netflix", "netflix", "nfx"): lambda: self.open_site("https://www.netflix.com"),
+            ("abrir spotify", "spotify", "spot"): lambda: self.open_site("https://www.spotify.com"),
+            ("abrir twitch", "twitch", "tw"): lambda: self.open_site("https://www.twitch.tv"),
+            ("abrir prime video", "prime", "primevideo"): lambda: self.open_site("https://www.primevideo.com"),
+            ("abrir hbo max", "hbomax", "hbo"): lambda: self.open_site("https://www.hbomax.com"),
+            ("abrir disney plus", "disneyplus", "disney+"): lambda: self.open_site("https://www.disneyplus.com"),
+            ("abrir crunchyroll", "crunchyroll", "anime"): lambda: self.open_site("https://www.crunchyroll.com"),
+            ("abrir paramount plus", "paramountplus", "paramount"): lambda: self.open_site("https://www.paramountplus.com"),
+            ("abrir star plus", "starplus", "star+"): lambda: self.open_site("https://www.starplus.com"),
+
+            # Produtividade e trabalho
+            ("abrir google drive", "drive", "gdrive"): lambda: self.open_site("https://drive.google.com"),
+            ("abrir google docs", "docs", "gdocs"): lambda: self.open_site("https://docs.google.com"),
+            ("abrir notion", "notion"): lambda: self.open_site("https://www.notion.so"),
+            ("abrir canva", "canva"): lambda: self.open_site("https://www.canva.com"),
+            ("abrir trello", "trello"): lambda: self.open_site("https://trello.com"),
+            ("abrir microsoft 365", "office", "microsoft"): lambda: self.open_site("https://www.microsoft365.com"),
+            ("abrir slack", "slack"): lambda: self.open_site("https://www.slack.com"),
+            ("abrir todoist", "todoist"): lambda: self.open_site("https://todoist.com"),
+            ("abrir dropbox", "dropbox"): lambda: self.open_site("https://www.dropbox.com"),
+            ("abrir google agenda", "calendar", "agenda"): lambda: self.open_site("https://calendar.google.com"),
+
+            # Bancos e pagamentos
+            ("abrir nubank", "nubank", "nu"): lambda: self.open_site("https://nubank.com.br"),
+            ("abrir itau", "itau"): lambda: self.open_site("https://www.itau.com.br"),
+            ("abrir banco do brasil", "bb", "bancobb"): lambda: self.open_site("https://www.bb.com.br"),
+            ("abrir caixa", "caixa", "cef"): lambda: self.open_site("https://www.caixa.gov.br"),
+            ("abrir picpay", "picpay"): lambda: self.open_site("https://www.picpay.com"),
+            ("abrir paypal", "paypal"): lambda: self.open_site("https://www.paypal.com"),
+            ("abrir mercado pago", "mercadopago", "mp"): lambda: self.open_site("https://www.mercadopago.com.br"),
+            ("abrir santander", "santander"): lambda: self.open_site("https://www.santander.com.br"),
+            ("abrir banco inter", "inter"): lambda: self.open_site("https://inter.co"),
+            ("abrir banco pan", "pan"): lambda: self.open_site("https://www.bancopan.com.br"),
+
+            # Estudos e pesquisa
+            ("abrir chatgpt", "chatgpt", "gpt"): lambda: self.open_site("https://chat.openai.com"),
+            ("abrir google scholar", "scholar", "acadêmico"): lambda: self.open_site("https://scholar.google.com"),
+            ("abrir khan academy", "khanacademy", "khan"): lambda: self.open_site("https://www.khanacademy.org"),
+            ("abrir coursera", "coursera"): lambda: self.open_site("https://www.coursera.org"),
+            ("abrir udemy", "udemy"): lambda: self.open_site("https://www.udemy.com"),
+            ("abrir wikipedia", "wikipedia", "wiki"): lambda: self.open_site("https://www.wikipedia.org"),
+            ("abrir mendeley", "mendeley"): lambda: self.open_site("https://www.mendeley.com"),
+            ("abrir perplexity", "perplexity"): lambda: self.open_site("https://www.perplexity.ai"),
+            ("abrir codecademy", "codecademy"): lambda: self.open_site("https://www.codecademy.com"),
+            ("abrir tradutor", "translate", "google tradutor"): lambda: self.open_site("https://translate.google.com"),
         })
+
 
         # carrega comandos personalizados
         self.load_custom_commands()
