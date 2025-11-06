@@ -29,6 +29,16 @@ class CommandEngine:
             # Navegador / Chrome / web
             ("abrir navegador", "abrir chrome", "navegador", "chrome", "abrir web", "open browser", "browser", "web"): self.open_browser,
 
+            #sites
+            ("abrir youtube", "youtube", "yt"): lambda: self.open_site("https://www.youtube.com"),
+            ("abrir google", "search", "google",): lambda: self.open_site("https://www.google.com"),
+            ("netflix", "n", "nfx"): lambda: self.open_site("https://www.netflix.com"),
+            ("abrir github", "github", "git", "gtb"): lambda: self.open_site("https://www.github.com"),
+            ("abrir chatgpt", "chatgpt", "cgpt",): lambda: self.open_site("https://www.chatgpt.com"),
+            ("abrir outlook", "outlook", "email",): lambda: self.open_site("https://www.outlook.com"),
+
+            
+
             # Exemplos adicionais (você pode adicionar aqui)
             ("abrir explorer", "explorer", "explorar", "abrir explorador", "abrir explorador de arquivos"): self.open_explorer,
             ("bloco de notas", "notepad", "abrir notepad", "abrir bloco de notas"): self.open_notepad,
@@ -99,6 +109,9 @@ class CommandEngine:
                "a8841f8a-7964-4977-b108-14edbb6ddb4f")
         webbrowser.open(url)
         return "🏭 Abrindo ambiente de produção do LN..."
+    def open_site(self, url):
+        print(f"🌐 Abrindo {url}...")
+        webbrowser.open(url)
 
     def open_browser(self) -> str:
         # tenta abrir chrome; se não, abre navegador padrão via webbrowser
@@ -146,7 +159,7 @@ class LynxApp(ctk.CTk):
         # título
         self.label_title = ctk.CTkLabel(
             self,
-            text="🦊 Lynx",
+            text="Lynx",
             font=ctk.CTkFont(size=18, weight="bold"),
             text_color="#2db7ff"
         )
