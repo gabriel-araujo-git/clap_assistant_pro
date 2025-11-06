@@ -1,10 +1,26 @@
-# assistant_ui.py
+# lynx_insideof.py
+"""
+Lynx (Insideof Edition)
+- Delivery: .py (runs on Windows)
+- Contextual "insideof" mode (currently supports: vscode)
+- Shows context indicator in the UI
+- Uses pyautogui for simple editor automation
+
+Dependencies:
+    pip install customtkinter pyautogui psutil pystray pillow
+
+Run:
+    python lynx_insideof.py
+"""
 import customtkinter as ctk
 import threading
 import subprocess
 import webbrowser
 import os
 import json
+import pyautogui
+import psutil
+import time
 from pystray import Icon, MenuItem, Menu
 from PIL import Image
 from tkinter import filedialog, messagebox
@@ -14,91 +30,174 @@ from tkinter import filedialog, messagebox
 # ---------------------------
 class CommandEngine:
     def __init__(self):
-        self.commands = {
-            ("abrir vscode", "vscode", "code", "vs", "abrir code", "abrir vs", "open vscode"): self.open_vscode,
-            ("abrir ln", "ln", "lnstudio", "studio ln", "aln", "lnstd", "std", "abrir ln studio"): self.open_ln,
-            ("abrir ln teste", "ln teste", "alnteste", "teste ln", "lntst", "ln tst", "ln-test", "TST", "tst"): self.open_ln_tst,
-            ("abrir ln prd", "ln prd", "alnprd", "lnprod", "ln produção", "prd ln", "ln-prd", "PRD", "prd"): self.open_ln_prd,
-            ("abrir navegador", "abrir chrome", "navegador", "chrome", "abrir web", "open browser", "browser", "web"): self.open_browser,
-            ("abrir explorer", "explorer", "explorar", "abrir explorador", "abrir explorador de arquivos"): self.open_explorer,
-            ("bloco de notas", "notepad", "abrir notepad", "abrir bloco de notas"): self.open_notepad,
-        }
+        self.context = None  # contexto ativo (ex: 'vscode')
+        self.commands = {}
+        self.context_actions = {}
 
-        # sites fixos
-        self.commands.update({
-            ("abrir youtube", "youtube", "yt"): lambda: self.open_site("https://www.youtube.com"),
-            ("abrir google", "google", "search", "pesquisa"): lambda: self.open_site("https://www.google.com"),
-            ("abrir netflix", "netflix", "nfx", "n"): lambda: self.open_site("https://www.netflix.com"),
-            ("abrir github", "github", "git", "gtb"): lambda: self.open_site("https://www.github.com"),
-            ("abrir chatgpt", "chatgpt", "cgpt", "gpt"): lambda: self.open_site("https://chat.openai.com"),
-            ("abrir outlook", "outlook", "email", "mail", "msmail"): lambda: self.open_site("https://outlook.live.com"),
-        })
+        # comandos gerais e contextuais
+        self.register_default_commands()
+        self.register_context_actions()
 
-        # carrega comandos personalizados
+        # carrega comandos personalizados (mantém compatibilidade)
         self.load_custom_commands()
 
+    # ---------------------------
+    # Registro de comandos
+    # ---------------------------
+    def register_default_commands(self):
+        self.commands.update({
+            # apps comuns
+            ("abrir vscode", "vscode", "code"): lambda: self.open_app("code"),
+            ("abrir navegador", "chrome", "browser"): lambda: subprocess.Popen("chrome", shell=True),
+            ("abrir explorer", "explorer"): lambda: subprocess.Popen("explorer", shell=True),
+            ("abrir notepad", "notepad", "bloco de notas"): lambda: subprocess.Popen("notepad.exe", shell=True),
+
+            # sites fixos
+            ("youtube", "abrir youtube"): lambda: self.open_site("https://youtube.com"),
+            ("github", "abrir github"): lambda: self.open_site("https://github.com"),
+            ("google", "abrir google"): lambda: self.open_site("https://google.com"),
+
+            # sair do contexto (comando global também)
+            ("sair", "exit"): self.exit_context,
+        })
+
+    def register_context_actions(self):
+        # ações contextuais por aplicativo (atualmente: vscode)
+        self.context_actions = {
+            "vscode": {
+                ("novo arquivo", "criar arquivo", "new file"): lambda: self.vscode_key("ctrl", "n"),
+                ("salvar", "save", "salvar arquivo"): lambda: self.vscode_key("ctrl", "s"),
+                ("executar script", "rodar script", "run"): lambda: self.vscode_key("ctrl", "f5"),
+                ("fechar aba", "close tab", "fechar"): lambda: self.vscode_key("ctrl", "w"),
+            }
+        }
+
     def load_custom_commands(self):
-        """Carrega comandos salvos pelo usuário (commands.json)"""
+        """Carrega comandos personalizados"""
         try:
             with open("commands.json", "r", encoding="utf-8") as f:
                 data = json.load(f)
             for cmd in data.get("commands", []):
-                if cmd["type"] == "internal":
-                    func = lambda path=cmd["path"]: subprocess.Popen(path, shell=True)
-                elif cmd["type"] == "external":
-                    func = lambda url=cmd["url"]: webbrowser.open(url)
+                if cmd.get("type") == "internal":
+                    func = lambda path=cmd.get("path"): subprocess.Popen(path, shell=True)
+                elif cmd.get("type") == "external":
+                    func = lambda url=cmd.get("url"): webbrowser.open(url)
                 else:
                     continue
-                self.commands[tuple(cmd["keywords"])] = func
+                self.commands[tuple(cmd.get("keywords", []))] = func
         except FileNotFoundError:
             with open("commands.json", "w", encoding="utf-8") as f:
                 json.dump({"commands": []}, f, indent=4, ensure_ascii=False)
 
+    # ---------------------------
+    # Execução de comandos
+    # ---------------------------
     def normalize(self, text: str) -> str:
         t = text.lower().strip()
-        replacements = ["abrir o ", "abrir a ", "abrir ", "entrar em ", "entrar no ", "por favor ", "por favor, "]
-        for r in replacements:
+        for r in ["abrir o ", "abrir a ", "abrir ", "entrar em ", "entrar no ", "por favor ", "por favor, "]:
             t = t.replace(r, "")
         return " ".join(t.split())
 
     def execute(self, text: str) -> str:
         text = self.normalize(text)
+
+        # 1) Se o comando for "insideof <app>"
+        if text.startswith("insideof "):
+            app = text.split(" ", 1)[1].strip()
+            return self.enter_context(app)
+
+        # 2) Se estiver em modo insideof, tente as ações contextuais primeiro
+        if self.context:
+            actions = self.context_actions.get(self.context, {})
+            for keys, func in actions.items():
+                if any(key in text for key in keys):
+                    try:
+                        func()
+                        return f"⚙️ Executando '{text}' dentro de {self.context.capitalize()}"
+                    except Exception as e:
+                        return f"❌ Erro ao executar ação no contexto: {e}"
+            # permitir sair do contexto com palavras-chave globais
+            if text in ("sair", "exit"):
+                return self.exit_context()
+            return f"💡 Você está dentro de {self.context.capitalize()}. Comando não reconhecido para este contexto."
+
+        # 3) Comandos gerais / fora de contexto
         for keys, func in self.commands.items():
             for key in keys:
                 if key in text:
                     try:
-                        func()
-                        return f"✅ Executando: {key}"
+                        result = func()
+                        # se a função retornar string, repassa; senão, devolve uma mensagem padrão
+                        return result if isinstance(result, str) else f"✅ Executando: {key}"
                     except Exception as e:
                         return f"❌ Erro ao executar: {e}"
+
         return f"❓ Comando não reconhecido: '{text}'"
 
     # ---------------------------
-    # Funções padrão
+    # Contexto universal
     # ---------------------------
-    def open_vscode(self) -> str:
-        try:
-            subprocess.Popen("code", shell=True)
-            return "🚀 Abrindo VSCode..."
-        except Exception:
-            possible = [
-                r"C:\Users\107457\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Visual Studio Code\Visual Studio Code.lnk",
-                r"C:\Program Files\Microsoft VS Code\Code.exe",
-                r"C:\Program Files (x86)\Microsoft VS Code\Code.exe",
-            ]
-            for p in possible:
-                if os.path.exists(p):
-                    subprocess.Popen(p, shell=True)
-                    return "🚀 Abrindo VSCode (fallback)..."
-            return "❌ VSCode não encontrado."
+    def enter_context(self, app: str) -> str:
+        app = app.lower()
+        supported = ("vscode",)  # por ora apenas vscode
+        if app not in supported:
+            return f"❌ Aplicação '{app}' não suportada. Suportado: {', '.join(supported)}"
 
-    def open_ln(self): subprocess.Popen(r"C:\LnStudio\eclipse.exe", shell=True)
-    def open_ln_tst(self): webbrowser.open("https://mingle-portal.inforcloudsuite.com/v2/ELETROFRIO_TST/e6d06856-3c6a-44d9-8ce3-ed3affd6ab21")
-    def open_ln_prd(self): webbrowser.open("https://mingle-portal.inforcloudsuite.com/v2/ELETROFRIO_PRD/a8841f8a-7964-4977-b108-14edbb6ddb4f")
-    def open_site(self, url): webbrowser.open(url)
-    def open_browser(self): subprocess.Popen("chrome", shell=True)
-    def open_explorer(self): subprocess.Popen("explorer", shell=True)
-    def open_notepad(self): subprocess.Popen("notepad.exe", shell=True)
+        # abre app se não estiver aberto
+        if not self.is_process_running(app):
+            self.open_app(app)
+            # tempo para abrir (pode ajustar)
+            time.sleep(2.5)
+
+        self.context = app
+        return f"💡 Agora você está dentro do {app.capitalize()} (modo insideof ativo)."
+
+    def exit_context(self) -> str:
+        if not self.context:
+            return "ℹ️ Nenhum contexto ativo."
+        prev = self.context
+        self.context = None
+        return f"⬅️ Saiu do modo insideof ({prev})."
+
+    # ---------------------------
+    # Utilitários
+    # ---------------------------
+    def is_process_running(self, name: str) -> bool:
+        name = name.lower()
+        for proc in psutil.process_iter(["name"]):
+            try:
+                if proc.info["name"] and name in proc.info["name"].lower():
+                    return True
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                continue
+        return False
+
+    def open_app(self, name: str):
+        try:
+            # mapeamento simples: 'vscode' -> 'code' CLI
+            if name == "vscode":
+                subprocess.Popen("code", shell=True)
+            else:
+                subprocess.Popen(name, shell=True)
+        except Exception:
+            pass
+
+    def open_site(self, url: str):
+        webbrowser.open(url)
+
+    # ---------------------------
+    # Ações específicas por app
+    # ---------------------------
+    def vscode_key(self, *keys):
+        """
+        Envia atalho de teclado para o VSCode via pyautogui.
+        Nota: pyautogui envia para a janela com foco.
+        """
+        try:
+            pyautogui.hotkey(*keys)
+            time.sleep(0.2)
+        except Exception as e:
+            raise e
 
 # ---------------------------
 # UI: Lynx
@@ -112,19 +211,23 @@ class LynxApp(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("Lynx")
-        self.geometry("360x200")
+        self.geometry("420x220")
         self.resizable(False, False)
         self.attributes("-topmost", True)
         self.configure(fg_color="#0f1113")
 
         # título
-        self.label_title = ctk.CTkLabel(self, text="Lynx", font=ctk.CTkFont(size=18, weight="bold"), text_color="#2db7ff")
+        self.label_title = ctk.CTkLabel(self, text="Lynx", font=ctk.CTkFont(size=20, weight="bold"), text_color="#2db7ff")
         self.label_title.pack(pady=(12, 6))
 
         # entrada
-        self.input = ctk.CTkEntry(self, placeholder_text="Digite o comando (ex: 'ln teste', 'vscode')", width=320, height=36)
-        self.input.pack(pady=(6, 8))
+        self.input = ctk.CTkEntry(self, placeholder_text="Digite o comando (ex: 'insideof vscode' ou 'novo arquivo')", width=380, height=36)
+        self.input.pack(pady=(6, 6))
         self.input.bind("<Return>", self.on_enter)
+
+        # indicador de contexto
+        self.context_label = ctk.CTkLabel(self, text="Contexto: —", text_color="#bdbdbd", font=ctk.CTkFont(size=12))
+        self.context_label.pack(pady=(2, 8))
 
         # resultado
         self.result = ctk.CTkLabel(self, text="", text_color="#d0d0d0", font=ctk.CTkFont(size=13))
@@ -142,11 +245,16 @@ class LynxApp(ctk.CTk):
 
         self.protocol("WM_DELETE_WINDOW", self.hide_window)
 
+        # atualiza indicador ao iniciar
+        self.update_context_label()
+
     def on_enter(self, event=None):
         cmd = self.input.get().strip()
         if not cmd:
             return
         result = engine.execute(cmd)
+        # se o engine mudou o contexto, atualizar o label
+        self.update_context_label()
         self.result.configure(text=result)
         self.input.delete(0, "end")
 
@@ -157,17 +265,15 @@ class LynxApp(ctk.CTk):
         from tkinter import Toplevel, Label
         h = Toplevel(self)
         h.title("Lynx - Comandos rápidos")
-        h.geometry("420x260")
+        h.geometry("520x300")
         h.attributes("-topmost", True)
         txt = (
             "Comandos padrão (exemplos):\n\n"
-            "- vscode / code / vs\n"
-            "- ln / lnstudio / aln\n"
-            "- ln teste / alnteste\n"
-            "- ln prd / alnprd\n"
-            "- youtube / github / google\n"
-            "- explorer / notepad\n\n"
-            "💡 Você pode adicionar novos comandos pelo botão 'Adicionar'."
+            "- insideof vscode         -> entra no modo interno do VSCode\n"
+            "- novo arquivo / salvar   -> comandos que funcionam dentro do VSCode (quando em contexto)\n"
+            "- executar script         -> rodar (Ctrl+F5) dentro do VSCode\n"
+            "- sair / exit             -> sai do contexto\n\n"
+            "💡 Você pode adicionar novos comandos pelo botão 'Adicionar' (comandos externos ou internos simples)."
         )
         Label(h, text=txt, justify="left", padx=12, pady=12).pack()
 
@@ -222,6 +328,13 @@ class LynxApp(ctk.CTk):
                 messagebox.showerror("Erro", f"Erro ao salvar comando: {e}")
 
         Button(win, text="Salvar", command=save_command).pack(pady=10)
+
+    def update_context_label(self):
+        ctx = engine.context
+        if ctx:
+            self.context_label.configure(text=f"Contexto: 🟢 Dentro do {ctx.capitalize()}")
+        else:
+            self.context_label.configure(text="Contexto: —")
 
 # ---------------------------
 # Tray Icon
