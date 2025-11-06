@@ -4,78 +4,83 @@ import threading
 import subprocess
 import webbrowser
 import os
+import json
 from pystray import Icon, MenuItem, Menu
 from PIL import Image
+from tkinter import filedialog, messagebox
 
 # ---------------------------
-# CommandEngine (sinônimos)
+# CommandEngine
 # ---------------------------
 class CommandEngine:
     def __init__(self):
-        # cada tuple são sinônimos/abreviações que mapeiam para a mesma ação
         self.commands = {
-            # VSCode
             ("abrir vscode", "vscode", "code", "vs", "abrir code", "abrir vs", "open vscode"): self.open_vscode,
-
-            # LN Studio (local)
             ("abrir ln", "ln", "lnstudio", "studio ln", "aln", "lnstd", "std", "abrir ln studio"): self.open_ln,
-
-            # LN Teste (web)
             ("abrir ln teste", "ln teste", "alnteste", "teste ln", "lntst", "ln tst", "ln-test", "TST", "tst"): self.open_ln_tst,
-
-            # LN Produção (web)
             ("abrir ln prd", "ln prd", "alnprd", "lnprod", "ln produção", "prd ln", "ln-prd", "PRD", "prd"): self.open_ln_prd,
-
-            # Navegador / Chrome / web
             ("abrir navegador", "abrir chrome", "navegador", "chrome", "abrir web", "open browser", "browser", "web"): self.open_browser,
-
-            #sites
-            ("abrir youtube", "youtube", "yt"): lambda: self.open_site("https://www.youtube.com"),
-            ("abrir google", "search", "google",): lambda: self.open_site("https://www.google.com"),
-            ("netflix", "n", "nfx"): lambda: self.open_site("https://www.netflix.com"),
-            ("abrir github", "github", "git", "gtb"): lambda: self.open_site("https://www.github.com"),
-            ("abrir chatgpt", "chatgpt", "cgpt",): lambda: self.open_site("https://www.chatgpt.com"),
-            ("abrir outlook", "outlook", "email",): lambda: self.open_site("https://www.outlook.com"),
-
-            
-
-            # Exemplos adicionais (você pode adicionar aqui)
             ("abrir explorer", "explorer", "explorar", "abrir explorador", "abrir explorador de arquivos"): self.open_explorer,
             ("bloco de notas", "notepad", "abrir notepad", "abrir bloco de notas"): self.open_notepad,
         }
 
+        # sites fixos
+        self.commands.update({
+            ("abrir youtube", "youtube", "yt"): lambda: self.open_site("https://www.youtube.com"),
+            ("abrir google", "google", "search", "pesquisa"): lambda: self.open_site("https://www.google.com"),
+            ("abrir netflix", "netflix", "nfx", "n"): lambda: self.open_site("https://www.netflix.com"),
+            ("abrir github", "github", "git", "gtb"): lambda: self.open_site("https://www.github.com"),
+            ("abrir chatgpt", "chatgpt", "cgpt", "gpt"): lambda: self.open_site("https://chat.openai.com"),
+            ("abrir outlook", "outlook", "email", "mail", "msmail"): lambda: self.open_site("https://outlook.live.com"),
+        })
+
+        # carrega comandos personalizados
+        self.load_custom_commands()
+
+    def load_custom_commands(self):
+        """Carrega comandos salvos pelo usuário (commands.json)"""
+        try:
+            with open("commands.json", "r", encoding="utf-8") as f:
+                data = json.load(f)
+            for cmd in data.get("commands", []):
+                if cmd["type"] == "internal":
+                    func = lambda path=cmd["path"]: subprocess.Popen(path, shell=True)
+                elif cmd["type"] == "external":
+                    func = lambda url=cmd["url"]: webbrowser.open(url)
+                else:
+                    continue
+                self.commands[tuple(cmd["keywords"])] = func
+        except FileNotFoundError:
+            with open("commands.json", "w", encoding="utf-8") as f:
+                json.dump({"commands": []}, f, indent=4, ensure_ascii=False)
+
     def normalize(self, text: str) -> str:
         t = text.lower().strip()
-        # remove palavras comuns que só atrapalham ("abrir", "abrir o", "entrar em" etc.)
         replacements = ["abrir o ", "abrir a ", "abrir ", "entrar em ", "entrar no ", "por favor ", "por favor, "]
         for r in replacements:
             t = t.replace(r, "")
-        # collapse whitespace
-        t = " ".join(t.split())
-        return t
+        return " ".join(t.split())
 
     def execute(self, text: str) -> str:
         text = self.normalize(text)
-        # procura se algum sinônimo está contido na string
         for keys, func in self.commands.items():
             for key in keys:
                 if key in text:
                     try:
-                        return func()
+                        func()
+                        return f"✅ Executando: {key}"
                     except Exception as e:
                         return f"❌ Erro ao executar: {e}"
         return f"❓ Comando não reconhecido: '{text}'"
 
     # ---------------------------
-    # Ações (retornam mensagem)
+    # Funções padrão
     # ---------------------------
     def open_vscode(self) -> str:
-        # tenta abrir via comando 'code' (se instalado no PATH)
         try:
             subprocess.Popen("code", shell=True)
             return "🚀 Abrindo VSCode..."
         except Exception:
-            # fallback para atalho do menu iniciar (lnk) ou executável
             possible = [
                 r"C:\Users\107457\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Visual Studio Code\Visual Studio Code.lnk",
                 r"C:\Program Files\Microsoft VS Code\Code.exe",
@@ -83,64 +88,20 @@ class CommandEngine:
             ]
             for p in possible:
                 if os.path.exists(p):
-                    try:
-                        subprocess.Popen(p, shell=True)
-                        return "🚀 Abrindo VSCode (fallback)..."
-                    except Exception:
-                        continue
-            return "❌ VSCode não encontrado. Verifique a instalação ou adicione 'code' ao PATH."
+                    subprocess.Popen(p, shell=True)
+                    return "🚀 Abrindo VSCode (fallback)..."
+            return "❌ VSCode não encontrado."
 
-    def open_ln(self) -> str:
-        # ajuste o caminho se necessário
-        ln_path = r"C:\LnStudio\eclipse.exe"
-        if os.path.exists(ln_path):
-            subprocess.Popen(ln_path, shell=True)
-            return "🦾 Abrindo LN Studio..."
-        else:
-            return f"❌ LN Studio não encontrado em: {ln_path}"
-
-    def open_ln_tst(self) -> str:
-        url = "https://mingle-portal.inforcloudsuite.com/v2/ELETROFRIO_TST/e6d06856-3c6a-44d9-8ce3-ed3affd6ab21"
-        webbrowser.open(url)
-        return "🧪 Abrindo ambiente de testes do LN..."
-
-    def open_ln_prd(self) -> str:
-        url = ("https://mingle-portal.inforcloudsuite.com/v2/ELETROFRIO_PRD/"
-               "a8841f8a-7964-4977-b108-14edbb6ddb4f")
-        webbrowser.open(url)
-        return "🏭 Abrindo ambiente de produção do LN..."
-    def open_site(self, url):
-        print(f"🌐 Abrindo {url}...")
-        webbrowser.open(url)
-
-    def open_browser(self) -> str:
-        # tenta abrir chrome; se não, abre navegador padrão via webbrowser
-        try:
-            subprocess.Popen("chrome", shell=True)
-            return "🌐 Abrindo Chrome..."
-        except Exception:
-            webbrowser.open("https://www.google.com")
-            return "🌐 Abrindo navegador padrão..."
-
-    def open_explorer(self) -> str:
-        try:
-            subprocess.Popen("explorer", shell=True)
-            return "📁 Abrindo Explorador de Arquivos..."
-        except Exception:
-            return "❌ Erro ao abrir explorador."
-
-    def open_notepad(self) -> str:
-        possible = ["notepad.exe", r"C:\Windows\system32\notepad.exe"]
-        for p in possible:
-            try:
-                subprocess.Popen(p, shell=True)
-                return "📝 Abrindo Bloco de Notas..."
-            except Exception:
-                continue
-        return "❌ Bloco de notas não encontrado."
+    def open_ln(self): subprocess.Popen(r"C:\LnStudio\eclipse.exe", shell=True)
+    def open_ln_tst(self): webbrowser.open("https://mingle-portal.inforcloudsuite.com/v2/ELETROFRIO_TST/e6d06856-3c6a-44d9-8ce3-ed3affd6ab21")
+    def open_ln_prd(self): webbrowser.open("https://mingle-portal.inforcloudsuite.com/v2/ELETROFRIO_PRD/a8841f8a-7964-4977-b108-14edbb6ddb4f")
+    def open_site(self, url): webbrowser.open(url)
+    def open_browser(self): subprocess.Popen("chrome", shell=True)
+    def open_explorer(self): subprocess.Popen("explorer", shell=True)
+    def open_notepad(self): subprocess.Popen("notepad.exe", shell=True)
 
 # ---------------------------
-# UI: Lynx (customtkinter)
+# UI: Lynx
 # ---------------------------
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
@@ -151,43 +112,22 @@ class LynxApp(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("Lynx")
-        self.geometry("360x180")
+        self.geometry("360x200")
         self.resizable(False, False)
         self.attributes("-topmost", True)
         self.configure(fg_color="#0f1113")
 
         # título
-        self.label_title = ctk.CTkLabel(
-            self,
-            text="Lynx",
-            font=ctk.CTkFont(size=18, weight="bold"),
-            text_color="#2db7ff"
-        )
+        self.label_title = ctk.CTkLabel(self, text="Lynx", font=ctk.CTkFont(size=18, weight="bold"), text_color="#2db7ff")
         self.label_title.pack(pady=(12, 6))
 
-        # entrada com autocomplete visual simples (placeholder)
-        self.input = ctk.CTkEntry(
-            self,
-            placeholder_text="Digite o comando (ex: 'ln teste', 'vscode')",
-            width=320,
-            height=36,
-            corner_radius=10
-        )
+        # entrada
+        self.input = ctk.CTkEntry(self, placeholder_text="Digite o comando (ex: 'ln teste', 'vscode')", width=320, height=36)
         self.input.pack(pady=(6, 8))
         self.input.bind("<Return>", self.on_enter)
-        # history simples (setas)
-        self.history = []
-        self.history_index = None
-        self.input.bind("<Up>", self.on_history_up)
-        self.input.bind("<Down>", self.on_history_down)
 
         # resultado
-        self.result = ctk.CTkLabel(
-            self,
-            text="",
-            text_color="#d0d0d0",
-            font=ctk.CTkFont(size=13)
-        )
+        self.result = ctk.CTkLabel(self, text="", text_color="#d0d0d0", font=ctk.CTkFont(size=13))
         self.result.pack(pady=(2, 10))
 
         # botões
@@ -197,6 +137,8 @@ class LynxApp(ctk.CTk):
         self.btn_close.grid(row=0, column=0, padx=6)
         self.btn_help = ctk.CTkButton(btn_frame, text="Ajuda", width=80, command=self.show_help)
         self.btn_help.grid(row=0, column=1, padx=6)
+        self.btn_add = ctk.CTkButton(btn_frame, text="Adicionar", width=80, command=self.show_add_command)
+        self.btn_add.grid(row=0, column=2, padx=6)
 
         self.protocol("WM_DELETE_WINDOW", self.hide_window)
 
@@ -204,10 +146,6 @@ class LynxApp(ctk.CTk):
         cmd = self.input.get().strip()
         if not cmd:
             return
-        # salva no histórico
-        self.history.append(cmd)
-        self.history_index = None
-
         result = engine.execute(cmd)
         self.result.configure(text=result)
         self.input.delete(0, "end")
@@ -216,61 +154,84 @@ class LynxApp(ctk.CTk):
         self.withdraw()
 
     def show_help(self):
-        # janela de ajuda simples
         from tkinter import Toplevel, Label
         h = Toplevel(self)
         h.title("Lynx - Comandos rápidos")
         h.geometry("420x260")
         h.attributes("-topmost", True)
         txt = (
-            "Comandos suportados (exemplos):\n\n"
-            "- vscode / code / vs / abrir vscode\n"
-            "- ln / lnstudio / studio ln / abrir ln\n"
-            "- ln teste / alnteste / lntst\n"
-            "- ln prd / lnprod / alnprd\n"
-            "- navegador / chrome / web\n"
-            "- explorer / abrir explorer\n"
-            "- bloco de notas / notepad\n\n"
-            "Dica: você pode usar abreviações ou escrever 'abrir ln teste'.\n"
-            "Adicione sinônimos editando CommandEngine.commands no código."
+            "Comandos padrão (exemplos):\n\n"
+            "- vscode / code / vs\n"
+            "- ln / lnstudio / aln\n"
+            "- ln teste / alnteste\n"
+            "- ln prd / alnprd\n"
+            "- youtube / github / google\n"
+            "- explorer / notepad\n\n"
+            "💡 Você pode adicionar novos comandos pelo botão 'Adicionar'."
         )
         Label(h, text=txt, justify="left", padx=12, pady=12).pack()
 
-    # history navigation
-    def on_history_up(self, event=None):
-        if not self.history:
-            return
-        if self.history_index is None:
-            self.history_index = len(self.history) - 1
-        elif self.history_index > 0:
-            self.history_index -= 1
-        self.input.delete(0, "end")
-        self.input.insert(0, self.history[self.history_index])
+    def show_add_command(self):
+        from tkinter import Toplevel, Label, Entry, Button, Radiobutton, StringVar
 
-    def on_history_down(self, event=None):
-        if not self.history or self.history_index is None:
-            return
-        if self.history_index < len(self.history) - 1:
-            self.history_index += 1
-            self.input.delete(0, "end")
-            self.input.insert(0, self.history[self.history_index])
-        else:
-            self.history_index = None
-            self.input.delete(0, "end")
+        win = Toplevel(self)
+        win.title("Adicionar Comando")
+        win.geometry("380x360")
+        win.configure(bg="#1b1d1f")
+        win.attributes("-topmost", True)
+
+        Label(win, text="Tipo de comando:", fg="white", bg="#1b1d1f").pack(pady=4)
+        cmd_type = StringVar(value="internal")
+        Radiobutton(win, text="Interno (programa)", variable=cmd_type, value="internal", bg="#1b1d1f", fg="white").pack()
+        Radiobutton(win, text="Externo (site)", variable=cmd_type, value="external", bg="#1b1d1f", fg="white").pack()
+
+        Label(win, text="Nome do comando:", fg="white", bg="#1b1d1f").pack(pady=(8, 2))
+        name_entry = Entry(win, width=40)
+        name_entry.pack()
+
+        Label(win, text="Palavras-chave (separadas por vírgula):", fg="white", bg="#1b1d1f").pack(pady=(8, 2))
+        keywords_entry = Entry(win, width=40)
+        keywords_entry.pack()
+
+        Label(win, text="Caminho (programa) ou URL (site):", fg="white", bg="#1b1d1f").pack(pady=(8, 2))
+        path_entry = Entry(win, width=40)
+        path_entry.pack()
+        Button(win, text="Selecionar arquivo", command=lambda: path_entry.insert(0, filedialog.askopenfilename())).pack(pady=4)
+
+        def save_command():
+            cmd_data = {
+                "type": cmd_type.get(),
+                "name": name_entry.get(),
+                "keywords": [k.strip().lower() for k in keywords_entry.get().split(",")],
+            }
+            if cmd_type.get() == "internal":
+                cmd_data["path"] = path_entry.get()
+            else:
+                cmd_data["url"] = path_entry.get()
+
+            try:
+                with open("commands.json", "r+", encoding="utf-8") as f:
+                    data = json.load(f)
+                    data["commands"].append(cmd_data)
+                    f.seek(0)
+                    json.dump(data, f, indent=4, ensure_ascii=False)
+                engine.load_custom_commands()
+                messagebox.showinfo("Sucesso", "✅ Comando salvo com sucesso!")
+                win.destroy()
+            except Exception as e:
+                messagebox.showerror("Erro", f"Erro ao salvar comando: {e}")
+
+        Button(win, text="Salvar", command=save_command).pack(pady=10)
 
 # ---------------------------
-# tray icon
+# Tray Icon
 # ---------------------------
 def create_tray(app):
-    def on_show(icon, item):
-        app.deiconify()
-
+    def on_show(icon, item): app.deiconify()
     def on_quit(icon, item):
         icon.stop()
-        try:
-            app.destroy()
-        except Exception:
-            pass
+        try: app.destroy()
+        except: pass
 
     image = Image.new("RGB", (64, 64), (0, 153, 255))
     menu = Menu(MenuItem("Mostrar Lynx", on_show), MenuItem("Sair", on_quit))
@@ -278,7 +239,7 @@ def create_tray(app):
     icon.run()
 
 # ---------------------------
-# run
+# Run
 # ---------------------------
 if __name__ == "__main__":
     app = LynxApp()

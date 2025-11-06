@@ -1,5 +1,0 @@
-sounddevice
-numpy
-psutil
-pyautogui
-win10toast
