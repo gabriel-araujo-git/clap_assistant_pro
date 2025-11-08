@@ -8,6 +8,7 @@ import json
 from pystray import Icon, MenuItem, Menu
 from PIL import Image
 from tkinter import filedialog, messagebox
+from tkinter import Toplevel, Text, Scrollbar, END, RIGHT, Y, LEFT, BOTH, Frame
 
 # ---------------------------
 # CommandEngine
@@ -61,6 +62,8 @@ class CommandEngine:
             ("abrir todoist", "todoist"): lambda: self.open_site("https://todoist.com"),
             ("abrir dropbox", "dropbox"): lambda: self.open_site("https://www.dropbox.com"),
             ("abrir google agenda", "calendar", "agenda"): lambda: self.open_site("https://calendar.google.com"),
+            ("abrir outlook", "outlook", "email"): lambda: self.open_site("https://www.outlook.com"),
+            
 
             # 💰 Bancos e pagamentos
             ("abrir nubank", "nubank", "nu"): lambda: self.open_site("https://nubank.com.br"),
@@ -301,22 +304,113 @@ class LynxApp(ctk.CTk):
         self.withdraw()
 
     def show_help(self):
-        from tkinter import Toplevel, Label
         h = Toplevel(self)
-        h.title("Lynx - Comandos rápidos")
-        h.geometry("420x260")
+        h.title("Lynx - Comandos e Dicas")
+        h.geometry("560x420")
+        h.configure(bg="#1b1d1f")
         h.attributes("-topmost", True)
-        txt = (
-            "Comandos padrão (exemplos):\n\n"
-            "- vscode / code / vs\n"
-            "- ln / lnstudio / aln\n"
-            "- ln teste / alnteste\n"
-            "- ln prd / alnprd\n"
-            "- youtube / github / google\n"
-            "- explorer / notepad\n\n"
-            "💡 Você pode adicionar novos comandos pelo botão 'Adicionar'."
+
+        # ---------------------------
+        # Container com Scroll
+        # ---------------------------
+        container = Frame(h, bg="#1b1d1f")
+        container.pack(fill=BOTH, expand=True, padx=10, pady=10)
+
+        scrollbar = Scrollbar(container)
+        scrollbar.pack(side=RIGHT, fill=Y)
+
+        text_box = Text(
+            container,
+            wrap="word",
+            bg="#1b1d1f",
+            fg="#d0d0d0",
+            insertbackground="white",
+            font=("Consolas", 11),
+            yscrollcommand=scrollbar.set,
+            relief="flat",
+            padx=14,
+            pady=10,
         )
-        Label(h, text=txt, justify="left", padx=12, pady=12).pack()
+        text_box.pack(side=LEFT, fill=BOTH, expand=True)
+        scrollbar.config(command=text_box.yview)
+
+        # ---------------------------
+        # Função auxiliar para escrever seções
+        # ---------------------------
+        def add_section(title, emoji, commands, color="#2db7ff"):
+            text_box.insert(END, f"\n{emoji} ", ("emoji",))
+            text_box.insert(END, f"{title}\n", ("section_title",))
+            for keys in commands:
+                sample = ", ".join(keys[:3])
+                text_box.insert(END, f"   • {sample}\n", ("command",))
+
+        # ---------------------------
+        # Separar comandos por categoria
+        # ---------------------------
+        system_cmds, site_cmds, app_cmds, custom_cmds = [], [], [], []
+
+        for keys, func in engine.commands.items():
+            first = next(iter(keys))
+            if "http" in str(func):  # sites externos
+                site_cmds.append(keys)
+            elif any(x in first for x in ("explorer", "notepad", "cmd", "calc", "taskmgr", "shutdown", "reiniciar")):
+                system_cmds.append(keys)
+            elif any(x in first for x in ("ln", "vscode", "studio", "prd", "teste")):
+                app_cmds.append(keys)
+            else:
+                custom_cmds.append(keys)
+
+        # ---------------------------
+        # Título
+        # ---------------------------
+        text_box.insert(END, "⚡ LYNX - GUIA DE COMANDOS RÁPIDOS ⚡\n", ("title",))
+        
+
+        # ---------------------------
+        # Seções principais
+        # ---------------------------
+        if app_cmds: add_section("Programas / Ambientes", "💻", app_cmds, "#2db7ff")
+        if site_cmds: add_section("Sites e Ferramentas Online", "🌐", site_cmds, "#00c896")
+        if system_cmds: add_section("Comandos do Sistema", "⚙️", system_cmds, "#ffaa00")
+        if custom_cmds: add_section("Comandos Personalizados", "🧠", custom_cmds, "#ff66cc")
+
+        # ---------------------------
+        # Dicas e atalhos
+        # ---------------------------
+        text_box.insert(END, "\n💡 DICAS ÚTEIS:\n", ("section_title",))
+        text_box.insert(END, " - Use sinônimos como 'abrir', 'entrar em', etc.\n")
+        text_box.insert(END, " - Adicione novos comandos no botão 'Adicionar'.\n")
+        text_box.insert(END, " - O Lynx reconhece tanto programas quanto sites.\n")
+        text_box.insert(END, " - Os comandos são salvos em 'commands.json'.\n\n")
+
+        text_box.insert(END, "⌨️ ATALHOS:\n", ("section_title",))
+        text_box.insert(END, " - ENTER → Executar comando\n")
+        text_box.insert(END, " - ESC → Fechar janela\n")
+
+        # ---------------------------
+        # Estilos de texto
+        # ---------------------------
+        text_box.tag_configure("title", foreground="#2db7ff", font=("Consolas", 13, "bold"))
+        text_box.tag_configure("section_title", foreground="#00b4ff", font=("Consolas", 12, "bold"))
+        text_box.tag_configure("command", foreground="#d0d0d0", font=("Consolas", 10))
+        text_box.tag_configure("emoji", font=("Consolas", 12))
+        text_box.config(state="disabled")
+
+        # ---------------------------
+        # Botão inferior
+        # ---------------------------
+        def open_json():
+            path = os.path.abspath("commands.json")
+            if os.path.exists(path):
+                os.startfile(path)
+            else:
+                with open(path, "w", encoding="utf-8") as f:
+                    json.dump({"commands": []}, f, indent=4, ensure_ascii=False)
+                os.startfile(path)
+
+        btn = ctk.CTkButton(h, text="Abrir commands.json", command=open_json, width=220)
+        btn.pack(pady=10)
+
 
     def show_add_command(self):
         # igual à sua versão original
