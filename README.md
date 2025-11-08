@@ -1,134 +1,113 @@
-# 🦊 Lynx — Desktop Assistant Open Source
+# 🦊 Lynx
 
-O **Lynx** é um assistente desktop leve, rápido e personalizável, criado para simplificar tarefas do dia a dia de desenvolvedores e analistas.  
-Com uma interface minimalista construída em **CustomTkinter**, o Lynx interpreta **comandos de texto naturais** e executa ações locais ou na web — como abrir o VSCode, o LN Studio ou ambientes de teste e produção.
+> O poder dos comandos rápidos, na ponta dos seus dedos.
 
-> 🚀 Um projeto open source que combina **automação pessoal**, **UX minimalista** e **customização simples via Python**.
-
----
-
-## 🌟 Principais Recursos
-
-- 🔹 **Interface leve e intuitiva** — uma janela compacta com modo escuro e feedback instantâneo.
-- 🔹 **Comandos naturais** — digite “abrir vscode”, “ln teste”, “chrome” ou sinônimos equivalentes.
-- 🔹 **Personalização total** — adicione novos comandos ou sinônimos editando uma única classe (`CommandEngine`).
-- 🔹 **Integração com bandeja do sistema** — o Lynx fica sempre acessível, sem ocupar espaço na tela.
-- 🔹 **Execução segura e local** — nenhum dado é enviado para servidores externos.
-- 🔹 **Código 100% open source** — modifique, contribua e compartilhe.
+O **Lynx** é um assistente desktop inteligente que executa comandos e abre programas, sites e ambientes com naturalidade.  
+Diga “ln teste”, “abrir VSCode” ou “abrir YouTube” — e ele faz o resto.
 
 ---
 
-## 💡 Exemplo de Uso
+## ✨ Destaques
 
-Após iniciar o Lynx:
-
-1. Digite no campo de entrada:
-   ```
-   ln teste
-   ```
-2. O Lynx abrirá automaticamente o ambiente de testes configurado.
-3. Tente também:
-   ```
-   vscode
-   ln prd
-   navegador
-   bloco de notas
-   ```
-
-> Cada comando possui **sinônimos configuráveis**, permitindo variações como “abrir ln teste” ou “abrir vs”.
+- ⚡ **Comandos rápidos e naturais** — sem sintaxe complicada.  
+- 🧠 **Aprendizado adaptável** — você adiciona seus próprios atalhos.  
+- 🎨 **Interface moderna (CustomTkinter)** — leve, escura e elegante.  
+- 🔗 **Integração com programas e sites** — do VSCode ao LinkedIn.  
+- 💾 **Persistência local** — seus comandos ficam salvos em `commands.json`.  
 
 ---
 
-## ⚙️ Instalação e Execução
+## 🖼️ Interface
 
-### 🐍 Pré-requisitos
-- Python **3.9+**
-- Pip instalado
-
-### 📦 Dependências
-Instale as dependências com:
-```bash
-pip install customtkinter pystray pillow
-```
-
-### ▶️ Executando o Lynx
-No terminal:
-```bash
-python assistant_ui.py
-```
-
-O Lynx iniciará em modo janela e ficará disponível na **bandeja do sistema** (System Tray).  
-Você pode ocultar ou reabrir a interface a qualquer momento.
+| Tela Principal | Ajuda Expandida | Adicionar Comando |
+|----------------|------------------|-------------------|
+| ![Main](docs/screenshot_main.png) | ![Help](docs/screenshot_help.png) | ![Add](docs/screenshot_add.png) |
 
 ---
 
-## 🧠 Estrutura do Projeto
+## 💻 Como usar
+
+1. **Clone o repositório:**
+   ```bash
+   git clone https://github.com/seuusuario/lynx.git
+   cd lynx
+   ```
+
+2. **Instale as dependências:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Execute o Lynx:**
+   ```bash
+   python assistant_ui.py
+   ```
+
+O aplicativo iniciará em modo janela e adicionará um ícone na bandeja do sistema.  
+Você pode escondê-lo e reabrir a qualquer momento.
+
+---
+
+## 🧩 Estrutura de diretórios
 
 ```
 lynx/
-├── assistant_ui.py     # Código principal (UI + Engine)
-├── README.md           # Este arquivo
-└── requirements.txt    # Dependências (opcional)
+│
+├── assistant_ui.py        # Interface principal (UI + Command Engine)
+├── commands.json          # Banco local de comandos
+├── requirements.txt
+├── LICENSE
+├── README.md
+├── CHANGELOG.md
+├── CONTRIBUTING.md
+└── docs/
+    ├── screenshot_main.png
+    ├── screenshot_help.png
+    └── screenshot_add.png
 ```
-
-### Componentes:
-- **CommandEngine** → Gerencia comandos, sinônimos e ações.
-- **LynxApp** → Interface principal construída com `customtkinter`.
-- **Tray Icon** → Ícone residente que permite abrir/fechar o app rapidamente.
 
 ---
 
-## 🧩 Adicionando Novos Comandos
+## 🧠 Como adicionar novos comandos
 
-Quer expandir o Lynx?  
-Edite a classe `CommandEngine` no arquivo `assistant_ui.py`:
+No app, clique em **“Adicionar”** e defina:
+- tipo: interno (programa) ou externo (site)  
+- nome e palavras-chave  
+- caminho (exe) ou URL
 
-```python
-("abrir spotify", "spotify", "abrir música"): self.open_spotify
-```
-
-E defina a função correspondente:
-```python
-def open_spotify(self):
-    subprocess.Popen("spotify", shell=True)
-    return "🎵 Abrindo Spotify..."
-```
-
-Pronto! O Lynx agora entende esse novo comando.
+O Lynx salva tudo automaticamente no arquivo `commands.json`.
 
 ---
 
-## 🤝 Contribuindo
+## 🛠️ Tecnologias
 
-Contribuições são muito bem-vindas!  
-Para colaborar:
-
-1. Faça um **fork** do repositório  
-2. Crie uma branch com sua feature:
-   ```bash
-   git checkout -b feature/nome-da-feature
-   ```
-3. Faça o commit das alterações:
-   ```bash
-   git commit -m "Adiciona comando Spotify"
-   ```
-4. Envie um **Pull Request**
-
-> Antes de enviar, mantenha o código limpo e siga o estilo existente (PEP8 + emoji feedbacks nos retornos).
-
----
-
-## 🧭 Roadmap (Ideias Futuras)
-
-- 🔸 Reconhecimento de voz (speech-to-text)
-- 🔸 Histórico persistente de comandos
-- 🔸 Temas customizáveis
-- 🔸 Plugins externos em Python
-- 🔸 Integração com APIs locais (ex: Git, Docker, Jira)
+- **Python 3.10+**
+- **CustomTkinter**
+- **PyStray**
+- **Pillow**
+- **Subprocess / Webbrowser**
 
 ---
 
 ## 📜 Licença
 
-Distribuído sob a licença **MIT**.  
-Você é livre para usar, modificar e distribuir — apenas mantenha os créditos ao projeto.
+Distribuído sob a [MIT License](LICENSE).
+
+---
+
+## 🤝 Contribuindo
+
+Quer ajudar a expandir o Lynx?  
+Veja nosso [guia de contribuição](CONTRIBUTING.md) e envie seu PR!
+
+---
+
+## 💬 Sobre o projeto
+
+O Lynx nasceu da vontade de automatizar ações simples do dia a dia de um desenvolvedor — abrir o VSCode, acessar o ambiente de teste, entrar em sites e ferramentas com um só comando.
+
+Criado por [Gabriel Araújo](https://github.com/seuusuario), e aberto à comunidade para crescer junto.
+
+---
+
+> _“Grandes ferramentas nascem de pequenas dores diárias.”_
