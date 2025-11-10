@@ -9,6 +9,7 @@ from pystray import Icon, MenuItem, Menu
 from PIL import Image
 from tkinter import filedialog, messagebox
 from tkinter import Toplevel, Text, Scrollbar, END, RIGHT, Y, LEFT, BOTH, Frame
+from tkinter import Toplevel, Label, Entry, Button, Radiobutton, StringVar, filedialog, messagebox
 
 # ---------------------------
 # CommandEngine
@@ -413,52 +414,76 @@ class LynxApp(ctk.CTk):
 
 
     def show_add_command(self):
-        # igual à sua versão original
-        from tkinter import Toplevel, Label, Entry, Button, Radiobutton, StringVar, filedialog, messagebox
+       
         win = Toplevel(self)
         win.title("Adicionar Comando")
         win.geometry("380x360")
         win.configure(bg="#1b1d1f")
         win.attributes("-topmost", True)
+
         Label(win, text="Tipo de comando:", fg="white", bg="#1b1d1f").pack(pady=4)
         cmd_type = StringVar(value="internal")
         Radiobutton(win, text="Interno (programa)", variable=cmd_type, value="internal", bg="#1b1d1f", fg="white").pack()
         Radiobutton(win, text="Externo (site)", variable=cmd_type, value="external", bg="#1b1d1f", fg="white").pack()
+
         Label(win, text="Nome do comando:", fg="white", bg="#1b1d1f").pack(pady=(8, 2))
         name_entry = Entry(win, width=40)
         name_entry.pack()
+
         Label(win, text="Palavras-chave (separadas por vírgula):", fg="white", bg="#1b1d1f").pack(pady=(8, 2))
         keywords_entry = Entry(win, width=40)
         keywords_entry.pack()
+
         Label(win, text="Caminho (programa) ou URL (site):", fg="white", bg="#1b1d1f").pack(pady=(8, 2))
         path_entry = Entry(win, width=40)
         path_entry.pack()
+
         Button(win, text="Selecionar arquivo", command=lambda: path_entry.insert(0, filedialog.askopenfilename())).pack(pady=4)
 
         def save_command():
-            cmd_data = {
-                "type": cmd_type.get(),
-                "name": name_entry.get(),
-                "keywords": [k.strip().lower() for k in keywords_entry.get().split(",")],
-            }
+            name = name_entry.get().strip()
+            keywords = [k.strip().lower() for k in keywords_entry.get().split(",") if k.strip()]
+            path = path_entry.get().strip()
+
+            if not name or not keywords or not path:
+                messagebox.showwarning("Campos obrigatórios", "Preencha todos os campos antes de salvar.")
+                return
+
+            cmd_data = {"type": cmd_type.get(), "name": name, "keywords": keywords}
             if cmd_type.get() == "internal":
-                cmd_data["path"] = path_entry.get()
+                cmd_data["path"] = path
             else:
-                cmd_data["url"] = path_entry.get()
+                cmd_data["url"] = path
 
             try:
+                # Garante que o arquivo exista e seja válido
+                if not os.path.exists("commands.json"):
+                    with open("commands.json", "w", encoding="utf-8") as f:
+                        json.dump({"commands": []}, f, indent=4, ensure_ascii=False)
+
                 with open("commands.json", "r+", encoding="utf-8") as f:
-                    data = json.load(f)
-                    data["commands"].append(cmd_data)
+                    try:
+                        data = json.load(f)
+                    except json.JSONDecodeError:
+                        data = {"commands": []}
+
+                    data.setdefault("commands", []).append(cmd_data)
                     f.seek(0)
                     json.dump(data, f, indent=4, ensure_ascii=False)
-                engine.load_custom_commands()
-                messagebox.showinfo("Sucesso", "✅ Comando salvo com sucesso!")
+                    f.truncate()
+
+                # recarrega engine
+                engine.commands.clear()
+                engine.__init__()
+
+                messagebox.showinfo("Sucesso", f"Comando '{name}' salvo com sucesso!")
                 win.destroy()
+
             except Exception as e:
-                messagebox.showerror("Erro", f"Erro ao salvar comando: {e}")
+                messagebox.showerror("Erro", f"Erro ao salvar comando:\n{e}")
 
         Button(win, text="Salvar", command=save_command).pack(pady=10)
+
 
 
 # ---------------------------
