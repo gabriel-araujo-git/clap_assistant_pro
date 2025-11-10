@@ -1,134 +1,144 @@
-# 🦊 Lynx — Desktop Assistant Open Source
+<!-- Banner central -->
+<div align="center">
+  <img src="https://img.shields.io/badge/Lynx%20Assistant-%23000000.svg?style=for-the-badge&logo=python&logoColor=white" height="32"/>
+  <img src="https://img.shields.io/badge/Desktop%20Automation-%23282828.svg?style=for-the-badge&logo=windowsterminal&logoColor=white" height="32"/>
+  <img src="https://img.shields.io/badge/Open%20Source-%23181717.svg?style=for-the-badge&logo=github&logoColor=white" height="32"/>
+</div>
 
-O **Lynx** é um assistente desktop leve, rápido e personalizável, criado para simplificar tarefas do dia a dia de desenvolvedores e analistas.  
-Com uma interface minimalista construída em **CustomTkinter**, o Lynx interpreta **comandos de texto naturais** e executa ações locais ou na web — como abrir o VSCode, o LN Studio ou ambientes de teste e produção.
+<h1 align="center">Lynx Assistant</h1>
 
-> 🚀 Um projeto open source que combina **automação pessoal**, **UX minimalista** e **customização simples via Python**.
+<p align="center">
+  <b>O poder dos comandos rápidos — na ponta dos seus dedos.</b><br/>
+  Um assistente desktop inteligente para abrir programas, sites e ambientes com naturalidade.
+</p>
 
----
-
-## 🌟 Principais Recursos
-
-- 🔹 **Interface leve e intuitiva** — uma janela compacta com modo escuro e feedback instantâneo.
-- 🔹 **Comandos naturais** — digite “abrir vscode”, “ln teste”, “chrome” ou sinônimos equivalentes.
-- 🔹 **Personalização total** — adicione novos comandos ou sinônimos editando uma única classe (`CommandEngine`).
-- 🔹 **Integração com bandeja do sistema** — o Lynx fica sempre acessível, sem ocupar espaço na tela.
-- 🔹 **Execução segura e local** — nenhum dado é enviado para servidores externos.
-- 🔹 **Código 100% open source** — modifique, contribua e compartilhe.
-
----
-
-## 💡 Exemplo de Uso
-
-Após iniciar o Lynx:
-
-1. Digite no campo de entrada:
-   ```
-   ln teste
-   ```
-2. O Lynx abrirá automaticamente o ambiente de testes configurado.
-3. Tente também:
-   ```
-   vscode
-   ln prd
-   navegador
-   bloco de notas
-   ```
-
-> Cada comando possui **sinônimos configuráveis**, permitindo variações como “abrir ln teste” ou “abrir vs”.
+<div align="center">
+  <img src="https://img.shields.io/github/license/gabriel-araujo-git/lynx-assistant?style=flat-square"/>
+  <img src="https://img.shields.io/github/v/release/gabriel-araujo-git/lynx-assistant?style=flat-square&color=brightgreen"/>
+  <img src="https://img.shields.io/github/last-commit/gabriel-araujo-git/lynx-assistant?style=flat-square"/>
+  <img src="https://img.shields.io/github/issues/gabriel-araujo-git/lynx-assistant?style=flat-square"/>
+  <img src="https://img.shields.io/github/pull-requests/gabriel-araujo-git/lynx-assistant?style=flat-square"/>
+  <img src="https://img.shields.io/badge/Python-3.10+-3776AB.svg?style=flat-square&logo=python&logoColor=white"/>
+</div>
 
 ---
 
-## ⚙️ Instalação e Execução
+## Visão Geral
 
-### 🐍 Pré-requisitos
-- Python **3.9+**
-- Pip instalado
+O **Lynx Assistant** é um assistente desktop open source criado para
+**executar comandos e automações com linguagem natural**.\
+Com ele, é possível abrir programas, sites ou ambientes de trabalho
+usando instruções simples como:
 
-### 📦 Dependências
-Instale as dependências com:
-```bash
-pip install customtkinter pystray pillow
+``` bash
+ln teste
+abrir vscode
+abrir youtube
 ```
 
-### ▶️ Executando o Lynx
-No terminal:
-```bash
+Desenvolvido em **Python**, com interface moderna via **CustomTkinter**,
+o Lynx combina **rapidez, modularidade e uma experiência fluida** de uso
+no desktop.
+
+------------------------------------------------------------------------
+
+## Principais Recursos
+
+-   **Comandos naturais** --- esqueça sintaxes complicadas; use
+    linguagem comum.\
+-   **Aprendizado adaptável** --- adicione e edite comandos pelo próprio
+    app.\
+-   **Interface moderna (CustomTkinter)** --- tema escuro, clean e
+    responsivo.\
+-   **Integrações locais e web** --- do VSCode ao LinkedIn.\
+-   **Persistência local** --- armazenamento seguro e transparente via
+    `commands.json`.\
+-   **Extensível** --- pronto para receber novas engines e módulos.
+
+------------------------------------------------------------------------
+
+## Interface
+
+  ---------------------------------------------------------------------------------------------------------
+  Tela Principal                      Ajuda Expandida                     Adicionar Comando
+  ----------------------------------- ----------------------------------- ---------------------------------
+  ![Main](docs/screenshot_main.png)   ![Help](docs/screenshot_help.png)   ![Add](docs/screenshot_add.png)
+
+  ---------------------------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+## Instalação
+
+``` bash
+# Clone o repositório
+git clone https://github.com/gabriel-araujo-git/lynx-assistant.git
+cd lynx-assistant
+
+# Instale as dependências
+pip install -r requirements.txt
+
+# Execute o Lynx
 python assistant_ui.py
 ```
 
-O Lynx iniciará em modo janela e ficará disponível na **bandeja do sistema** (System Tray).  
-Você pode ocultar ou reabrir a interface a qualquer momento.
+O aplicativo será iniciado em modo janela e adicionará um ícone na
+bandeja do sistema.\
+Você pode ocultá-lo e reabrir a qualquer momento.
 
----
+------------------------------------------------------------------------
 
-## 🧠 Estrutura do Projeto
+## Estrutura do Projeto
 
-```
-lynx/
-├── assistant_ui.py     # Código principal (UI + Engine)
-├── README.md           # Este arquivo
-└── requirements.txt    # Dependências (opcional)
-```
+    lynx-assistant/
+    │
+    ├── assistant_ui.py        # Interface principal (UI + Command Engine)
+    ├── commands.json          # Banco local de comandos
+    ├── requirements.txt
+    ├── LICENSE
+    ├── README.md
+    ├── CHANGELOG.md
+    ├── CONTRIBUTING.md
+    └── docs/
+        ├── screenshot_main.png
+        ├── screenshot_help.png
+        └── screenshot_add.png
 
-### Componentes:
-- **CommandEngine** → Gerencia comandos, sinônimos e ações.
-- **LynxApp** → Interface principal construída com `customtkinter`.
-- **Tray Icon** → Ícone residente que permite abrir/fechar o app rapidamente.
+------------------------------------------------------------------------
 
----
+## Adicionando Novos Comandos
 
-## 🧩 Adicionando Novos Comandos
+No aplicativo, selecione **Adicionar** e defina:
 
-Quer expandir o Lynx?  
-Edite a classe `CommandEngine` no arquivo `assistant_ui.py`:
+  Campo            Descrição
+  ---------------- ---------------------------------------
+  Tipo             Interno (programa) ou Externo (site)
+  Nome             Nome do comando
+  Palavras-chave   Termos que acionam o comando
+  Caminho / URL    Caminho do executável ou link do site
 
-```python
-("abrir spotify", "spotify", "abrir música"): self.open_spotify
-```
+O Lynx salva as informações automaticamente em `commands.json`.
 
-E defina a função correspondente:
-```python
-def open_spotify(self):
-    subprocess.Popen("spotify", shell=True)
-    return "🎵 Abrindo Spotify..."
-```
+------------------------------------------------------------------------
 
-Pronto! O Lynx agora entende esse novo comando.
+## Stack Técnica
 
----
+-   Python 3.10+
+-   CustomTkinter
+-   PyStray
+-   Pillow
+-   Subprocess / Webbrowser
 
-## 🤝 Contribuindo
+------------------------------------------------------------------------
 
-Contribuições são muito bem-vindas!  
-Para colaborar:
+## Contribuição
 
-1. Faça um **fork** do repositório  
-2. Crie uma branch com sua feature:
-   ```bash
-   git checkout -b feature/nome-da-feature
-   ```
-3. Faça o commit das alterações:
-   ```bash
-   git commit -m "Adiciona comando Spotify"
-   ```
-4. Envie um **Pull Request**
+Contribuições são bem-vindas. Consulte o arquivo **CONTRIBUTING.md**
+antes de enviar um pull request.
 
-> Antes de enviar, mantenha o código limpo e siga o estilo existente (PEP8 + emoji feedbacks nos retornos).
+------------------------------------------------------------------------
 
----
+## Licença
 
-## 🧭 Roadmap (Ideias Futuras)
-
-- 🔸 Reconhecimento de voz (speech-to-text)
-- 🔸 Histórico persistente de comandos
-- 🔸 Temas customizáveis
-- 🔸 Plugins externos em Python
-- 🔸 Integração com APIs locais (ex: Git, Docker, Jira)
-
----
-
-## 📜 Licença
-
-Distribuído sob a licença **MIT**.  
-Você é livre para usar, modificar e distribuir — apenas mantenha os créditos ao projeto.
+Distribuído sob a licença MIT. Consulte o arquivo **LICENSE** para mais
+detalhes.
