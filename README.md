@@ -1,113 +1,144 @@
-# 🦊 Lynx
+<!-- Banner central -->
+<div align="center">
+  <img src="https://img.shields.io/badge/Lynx%20Assistant-%23000000.svg?style=for-the-badge&logo=python&logoColor=white" height="32"/>
+  <img src="https://img.shields.io/badge/Desktop%20Automation-%23282828.svg?style=for-the-badge&logo=windowsterminal&logoColor=white" height="32"/>
+  <img src="https://img.shields.io/badge/Open%20Source-%23181717.svg?style=for-the-badge&logo=github&logoColor=white" height="32"/>
+</div>
 
-> O poder dos comandos rápidos, na ponta dos seus dedos.
+<h1 align="center">Lynx Assistant</h1>
 
-O **Lynx** é um assistente desktop inteligente que executa comandos e abre programas, sites e ambientes com naturalidade.  
-Diga “ln teste”, “abrir VSCode” ou “abrir YouTube” — e ele faz o resto.
+<p align="center">
+  <b>O poder dos comandos rápidos — na ponta dos seus dedos.</b><br/>
+  Um assistente desktop inteligente para abrir programas, sites e ambientes com naturalidade.
+</p>
 
----
-
-## ✨ Destaques
-
-- ⚡ **Comandos rápidos e naturais** — sem sintaxe complicada.  
-- 🧠 **Aprendizado adaptável** — você adiciona seus próprios atalhos.  
-- 🎨 **Interface moderna (CustomTkinter)** — leve, escura e elegante.  
-- 🔗 **Integração com programas e sites** — do VSCode ao LinkedIn.  
-- 💾 **Persistência local** — seus comandos ficam salvos em `commands.json`.  
-
----
-
-## 🖼️ Interface
-
-| Tela Principal | Ajuda Expandida | Adicionar Comando |
-|----------------|------------------|-------------------|
-| ![Main](docs/screenshot_main.png) | ![Help](docs/screenshot_help.png) | ![Add](docs/screenshot_add.png) |
+<div align="center">
+  <img src="https://img.shields.io/github/license/gabriel-araujo-git/lynx-assistant?style=flat-square"/>
+  <img src="https://img.shields.io/github/v/release/gabriel-araujo-git/lynx-assistant?style=flat-square&color=brightgreen"/>
+  <img src="https://img.shields.io/github/last-commit/gabriel-araujo-git/lynx-assistant?style=flat-square"/>
+  <img src="https://img.shields.io/github/issues/gabriel-araujo-git/lynx-assistant?style=flat-square"/>
+  <img src="https://img.shields.io/github/pull-requests/gabriel-araujo-git/lynx-assistant?style=flat-square"/>
+  <img src="https://img.shields.io/badge/Python-3.10+-3776AB.svg?style=flat-square&logo=python&logoColor=white"/>
+</div>
 
 ---
 
-## 💻 Como usar
+## Visão Geral
 
-1. **Clone o repositório:**
-   ```bash
-   git clone https://github.com/seuusuario/lynx.git
-   cd lynx
-   ```
+O **Lynx Assistant** é um assistente desktop open source criado para
+**executar comandos e automações com linguagem natural**.\
+Com ele, é possível abrir programas, sites ou ambientes de trabalho
+usando instruções simples como:
 
-2. **Instale as dependências:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Execute o Lynx:**
-   ```bash
-   python assistant_ui.py
-   ```
-
-O aplicativo iniciará em modo janela e adicionará um ícone na bandeja do sistema.  
-Você pode escondê-lo e reabrir a qualquer momento.
-
----
-
-## 🧩 Estrutura de diretórios
-
-```
-lynx/
-│
-├── assistant_ui.py        # Interface principal (UI + Command Engine)
-├── commands.json          # Banco local de comandos
-├── requirements.txt
-├── LICENSE
-├── README.md
-├── CHANGELOG.md
-├── CONTRIBUTING.md
-└── docs/
-    ├── screenshot_main.png
-    ├── screenshot_help.png
-    └── screenshot_add.png
+``` bash
+ln teste
+abrir vscode
+abrir youtube
 ```
 
----
+Desenvolvido em **Python**, com interface moderna via **CustomTkinter**,
+o Lynx combina **rapidez, modularidade e uma experiência fluida** de uso
+no desktop.
 
-## 🧠 Como adicionar novos comandos
+------------------------------------------------------------------------
 
-No app, clique em **“Adicionar”** e defina:
-- tipo: interno (programa) ou externo (site)  
-- nome e palavras-chave  
-- caminho (exe) ou URL
+## Principais Recursos
 
-O Lynx salva tudo automaticamente no arquivo `commands.json`.
+-   **Comandos naturais** --- esqueça sintaxes complicadas; use
+    linguagem comum.\
+-   **Aprendizado adaptável** --- adicione e edite comandos pelo próprio
+    app.\
+-   **Interface moderna (CustomTkinter)** --- tema escuro, clean e
+    responsivo.\
+-   **Integrações locais e web** --- do VSCode ao LinkedIn.\
+-   **Persistência local** --- armazenamento seguro e transparente via
+    `commands.json`.\
+-   **Extensível** --- pronto para receber novas engines e módulos.
 
----
+------------------------------------------------------------------------
 
-## 🛠️ Tecnologias
+## Interface
 
-- **Python 3.10+**
-- **CustomTkinter**
-- **PyStray**
-- **Pillow**
-- **Subprocess / Webbrowser**
+  ---------------------------------------------------------------------------------------------------------
+  Tela Principal                      Ajuda Expandida                     Adicionar Comando
+  ----------------------------------- ----------------------------------- ---------------------------------
+  ![Main](docs/screenshot_main.png)   ![Help](docs/screenshot_help.png)   ![Add](docs/screenshot_add.png)
 
----
+  ---------------------------------------------------------------------------------------------------------
 
-## 📜 Licença
+------------------------------------------------------------------------
 
-Distribuído sob a [MIT License](LICENSE).
+## Instalação
 
----
+``` bash
+# Clone o repositório
+git clone https://github.com/gabriel-araujo-git/lynx-assistant.git
+cd lynx-assistant
 
-## 🤝 Contribuindo
+# Instale as dependências
+pip install -r requirements.txt
 
-Quer ajudar a expandir o Lynx?  
-Veja nosso [guia de contribuição](CONTRIBUTING.md) e envie seu PR!
+# Execute o Lynx
+python assistant_ui.py
+```
 
----
+O aplicativo será iniciado em modo janela e adicionará um ícone na
+bandeja do sistema.\
+Você pode ocultá-lo e reabrir a qualquer momento.
 
-## 💬 Sobre o projeto
+------------------------------------------------------------------------
 
-O Lynx nasceu da vontade de automatizar ações simples do dia a dia de um desenvolvedor — abrir o VSCode, acessar o ambiente de teste, entrar em sites e ferramentas com um só comando.
+## Estrutura do Projeto
 
-Criado por [Gabriel Araújo](https://github.com/seuusuario), e aberto à comunidade para crescer junto.
+    lynx-assistant/
+    │
+    ├── assistant_ui.py        # Interface principal (UI + Command Engine)
+    ├── commands.json          # Banco local de comandos
+    ├── requirements.txt
+    ├── LICENSE
+    ├── README.md
+    ├── CHANGELOG.md
+    ├── CONTRIBUTING.md
+    └── docs/
+        ├── screenshot_main.png
+        ├── screenshot_help.png
+        └── screenshot_add.png
 
----
+------------------------------------------------------------------------
 
-> _“Grandes ferramentas nascem de pequenas dores diárias.”_
+## Adicionando Novos Comandos
+
+No aplicativo, selecione **Adicionar** e defina:
+
+  Campo            Descrição
+  ---------------- ---------------------------------------
+  Tipo             Interno (programa) ou Externo (site)
+  Nome             Nome do comando
+  Palavras-chave   Termos que acionam o comando
+  Caminho / URL    Caminho do executável ou link do site
+
+O Lynx salva as informações automaticamente em `commands.json`.
+
+------------------------------------------------------------------------
+
+## Stack Técnica
+
+-   Python 3.10+
+-   CustomTkinter
+-   PyStray
+-   Pillow
+-   Subprocess / Webbrowser
+
+------------------------------------------------------------------------
+
+## Contribuição
+
+Contribuições são bem-vindas. Consulte o arquivo **CONTRIBUTING.md**
+antes de enviar um pull request.
+
+------------------------------------------------------------------------
+
+## Licença
+
+Distribuído sob a licença MIT. Consulte o arquivo **LICENSE** para mais
+detalhes.
