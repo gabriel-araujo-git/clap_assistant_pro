@@ -414,7 +414,8 @@ class LynxApp(ctk.CTk):
 
 
     def show_add_command(self):
-       
+        from tkinter import Toplevel, Label, Entry, Button, Radiobutton, StringVar, filedialog, messagebox
+
         win = Toplevel(self)
         win.title("Adicionar Comando")
         win.geometry("380x360")
@@ -422,9 +423,16 @@ class LynxApp(ctk.CTk):
         win.attributes("-topmost", True)
 
         Label(win, text="Tipo de comando:", fg="white", bg="#1b1d1f").pack(pady=4)
-        cmd_type = StringVar(value="internal")
-        Radiobutton(win, text="Interno (programa)", variable=cmd_type, value="internal", bg="#1b1d1f", fg="white").pack()
-        Radiobutton(win, text="Externo (site)", variable=cmd_type, value="external", bg="#1b1d1f", fg="white").pack()
+
+        # O segredo: vincular o StringVar ao Toplevel
+        win.cmd_type = StringVar(win, value="internal")
+
+        rb_frame = Frame(win, bg="#1b1d1f")
+        rb_frame.pack()
+        Radiobutton(rb_frame, text="Interno (programa)", variable=win.cmd_type,
+                    value="internal", bg="#1b1d1f", fg="white", selectcolor="#2b2d2f").pack(side="left", padx=10)
+        Radiobutton(rb_frame, text="Externo (site)", variable=win.cmd_type,
+                    value="external", bg="#1b1d1f", fg="white", selectcolor="#2b2d2f").pack(side="left", padx=10)
 
         Label(win, text="Nome do comando:", fg="white", bg="#1b1d1f").pack(pady=(8, 2))
         name_entry = Entry(win, width=40)
@@ -437,10 +445,10 @@ class LynxApp(ctk.CTk):
         Label(win, text="Caminho (programa) ou URL (site):", fg="white", bg="#1b1d1f").pack(pady=(8, 2))
         path_entry = Entry(win, width=40)
         path_entry.pack()
-
         Button(win, text="Selecionar arquivo", command=lambda: path_entry.insert(0, filedialog.askopenfilename())).pack(pady=4)
 
         def save_command():
+            cmd_type = win.cmd_type.get()  # sempre seguro agora
             name = name_entry.get().strip()
             keywords = [k.strip().lower() for k in keywords_entry.get().split(",") if k.strip()]
             path = path_entry.get().strip()
@@ -449,14 +457,14 @@ class LynxApp(ctk.CTk):
                 messagebox.showwarning("Campos obrigatórios", "Preencha todos os campos antes de salvar.")
                 return
 
-            cmd_data = {"type": cmd_type.get(), "name": name, "keywords": keywords}
-            if cmd_type.get() == "internal":
+            cmd_data = {"type": cmd_type, "name": name, "keywords": keywords}
+            if cmd_type == "internal":
                 cmd_data["path"] = path
             else:
                 cmd_data["url"] = path
 
             try:
-                # Garante que o arquivo exista e seja válido
+                # Garante arquivo válido
                 if not os.path.exists("commands.json"):
                     with open("commands.json", "w", encoding="utf-8") as f:
                         json.dump({"commands": []}, f, indent=4, ensure_ascii=False)
@@ -467,22 +475,21 @@ class LynxApp(ctk.CTk):
                     except json.JSONDecodeError:
                         data = {"commands": []}
 
-                    data.setdefault("commands", []).append(cmd_data)
+                    data["commands"].append(cmd_data)
                     f.seek(0)
                     json.dump(data, f, indent=4, ensure_ascii=False)
                     f.truncate()
 
-                # recarrega engine
                 engine.commands.clear()
                 engine.__init__()
 
                 messagebox.showinfo("Sucesso", f"Comando '{name}' salvo com sucesso!")
                 win.destroy()
-
             except Exception as e:
                 messagebox.showerror("Erro", f"Erro ao salvar comando:\n{e}")
 
         Button(win, text="Salvar", command=save_command).pack(pady=10)
+
 
 
 

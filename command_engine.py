@@ -320,52 +320,111 @@ class LynxApp(ctk.CTk):
         Label(h, text=txt, justify="left", padx=12, pady=12).pack()
 
     def show_add_command(self):
-        # igual à sua versão original
-        from tkinter import Toplevel, Label, Entry, Button, Radiobutton, StringVar, filedialog, messagebox
-        win = Toplevel(self)
-        win.title("Adicionar Comando")
-        win.geometry("380x360")
-        win.configure(bg="#1b1d1f")
-        win.attributes("-topmost", True)
-        Label(win, text="Tipo de comando:", fg="white", bg="#1b1d1f").pack(pady=4)
-        cmd_type = StringVar(value="internal")
-        Radiobutton(win, text="Interno (programa)", variable=cmd_type, value="internal", bg="#1b1d1f", fg="white").pack()
-        Radiobutton(win, text="Externo (site)", variable=cmd_type, value="external", bg="#1b1d1f", fg="white").pack()
-        Label(win, text="Nome do comando:", fg="white", bg="#1b1d1f").pack(pady=(8, 2))
-        name_entry = Entry(win, width=40)
-        name_entry.pack()
-        Label(win, text="Palavras-chave (separadas por vírgula):", fg="white", bg="#1b1d1f").pack(pady=(8, 2))
-        keywords_entry = Entry(win, width=40)
-        keywords_entry.pack()
-        Label(win, text="Caminho (programa) ou URL (site):", fg="white", bg="#1b1d1f").pack(pady=(8, 2))
-        path_entry = Entry(win, width=40)
-        path_entry.pack()
-        Button(win, text="Selecionar arquivo", command=lambda: path_entry.insert(0, filedialog.askopenfilename())).pack(pady=4)
+        import tkinter as tk
+        from tkinter import filedialog, messagebox
+        import json, os
 
+        win = ctk.CTkToplevel(self)
+        win.title("Adicionar Comando")
+        win.geometry("400x420")
+        win.resizable(False, False)
+        win.attributes("-topmost", True)
+        win.configure(fg_color="#1b1d1f")
+
+        ctk.CTkLabel(win, text="Adicionar Novo Comando", font=ctk.CTkFont(size=16, weight="bold")).pack(pady=(10, 6))
+
+        # ---------------------------
+        # Tipo de comando
+        # ---------------------------
+        type_frame = ctk.CTkFrame(win, fg_color="transparent")
+        type_frame.pack(pady=(10, 8))
+
+        ctk.CTkLabel(type_frame, text="Tipo de comando:").pack(anchor="w")
+
+        cmd_type = ctk.StringVar(value="internal")
+
+        rb_internal = ctk.CTkRadioButton(type_frame, text="Interno (programa)", variable=cmd_type, value="internal")
+        rb_internal.pack(anchor="w", pady=2)
+
+        rb_external = ctk.CTkRadioButton(type_frame, text="Externo (site)", variable=cmd_type, value="external")
+        rb_external.pack(anchor="w", pady=2)
+
+        # ---------------------------
+        # Campos de entrada
+        # ---------------------------
+        def add_label(text):
+            ctk.CTkLabel(win, text=text).pack(anchor="w", padx=20, pady=(6, 0))
+
+        add_label("Nome do comando:")
+        name_entry = ctk.CTkEntry(win, width=340)
+        name_entry.pack(pady=(0, 4))
+
+        add_label("Palavras-chave (separadas por vírgula):")
+        keywords_entry = ctk.CTkEntry(win, width=340)
+        keywords_entry.pack(pady=(0, 4))
+
+        add_label("Caminho (programa) ou URL (site):")
+        path_entry = ctk.CTkEntry(win, width=340)
+        path_entry.pack(pady=(0, 4))
+
+        def browse_file():
+            file_path = filedialog.askopenfilename()
+            if file_path:
+                path_entry.delete(0, "end")
+                path_entry.insert(0, file_path)
+
+        ctk.CTkButton(win, text="Selecionar arquivo", command=browse_file, width=160).pack(pady=6)
+
+        # ---------------------------
+        # Função de salvar
+        # ---------------------------
         def save_command():
-            cmd_data = {
-                "type": cmd_type.get(),
-                "name": name_entry.get(),
-                "keywords": [k.strip().lower() for k in keywords_entry.get().split(",")],
-            }
-            if cmd_type.get() == "internal":
-                cmd_data["path"] = path_entry.get()
+            name = name_entry.get().strip()
+            keywords = [k.strip().lower() for k in keywords_entry.get().split(",") if k.strip()]
+            path = path_entry.get().strip()
+            tipo = cmd_type.get()
+
+            if not name or not keywords or not path:
+                messagebox.showwarning("Campos obrigatórios", "Preencha todos os campos antes de salvar.")
+                return
+
+            cmd_data = {"type": tipo, "name": name, "keywords": keywords}
+            if tipo == "internal":
+                cmd_data["path"] = path
             else:
-                cmd_data["url"] = path_entry.get()
+                cmd_data["url"] = path
 
             try:
+                if not os.path.exists("commands.json"):
+                    with open("commands.json", "w", encoding="utf-8") as f:
+                        json.dump({"commands": []}, f, indent=4, ensure_ascii=False)
+
                 with open("commands.json", "r+", encoding="utf-8") as f:
-                    data = json.load(f)
+                    try:
+                        data = json.load(f)
+                    except json.JSONDecodeError:
+                        data = {"commands": []}
+
                     data["commands"].append(cmd_data)
                     f.seek(0)
                     json.dump(data, f, indent=4, ensure_ascii=False)
-                engine.load_custom_commands()
-                messagebox.showinfo("Sucesso", "✅ Comando salvo com sucesso!")
-                win.destroy()
-            except Exception as e:
-                messagebox.showerror("Erro", f"Erro ao salvar comando: {e}")
+                    f.truncate()
 
-        Button(win, text="Salvar", command=save_command).pack(pady=10)
+                # Recarrega engine
+                engine.commands.clear()
+                engine.__init__()
+
+                messagebox.showinfo("Sucesso", f"Comando '{name}' salvo com sucesso!")
+                win.destroy()
+
+            except Exception as e:
+                messagebox.showerror("Erro", f"Erro ao salvar comando:\n{e}")
+
+        # ---------------------------
+        # Botão de salvar
+        # ---------------------------
+        ctk.CTkButton(win, text="Salvar", command=save_command, width=160).pack(pady=12)
+
 
 
 # ---------------------------
