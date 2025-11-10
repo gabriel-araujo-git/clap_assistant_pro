@@ -22,7 +22,7 @@ Cada versão aqui representa um marco funcional e de design do Lynx — desde a 
 
 ---
 
-## 🦊 v1.1.0 — 07 de Novembro de 2025
+## v1.1.0 — 07 de Novembro de 2025
 ### Atualização de Interface e Novos Recursos
 
 #### Adicionado
