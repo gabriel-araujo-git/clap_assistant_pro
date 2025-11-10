@@ -11,7 +11,7 @@ center = size // 2
 # ---------------------------
 # GLOW EXTERNO (halo azul)
 # ---------------------------
-glow = Image.new("RGBA", img.size, (0, 0, 0, 0))
+glow = Image.new("RGBA", img.size, (0, 5, 2, 0))
 gdraw = ImageDraw.Draw(glow)
 for i in range(80, 180, 5):
     alpha = max(0, 255 - (i - 80) * 3)
