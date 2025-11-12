@@ -1,24 +1,16 @@
-<!-- Banner central -->
+<!-- Banner -->
 <div align="center">
-  <img src="https://img.shields.io/badge/Lynx%20Assistant-%23000000.svg?style=for-the-badge&logo=python&logoColor=white" height="30"/>
-  <img src="https://img.shields.io/badge/CHANGELOG-%23181717.svg?style=for-the-badge&logo=github&logoColor=white" height="30"/>
+  <img src="https://img.shields.io/badge/Lynx%20Assistant-Changelog-%231a1a1a.svg?style=for-the-badge&logo=github&logoColor=white" height="32"/>
+  <img src="https://img.shields.io/badge/Versioning-SemVer%20Compliant-%23282828.svg?style=for-the-badge&logo=semanticrelease&logoColor=white" height="32"/>
+  <img src="https://img.shields.io/badge/Open%20Source-%23181717.svg?style=for-the-badge&logo=opensourceinitiative&logoColor=white" height="32"/>
 </div>
 
-<h1 align="center">Histórico de Versões — Lynx Assistant</h1>
+<h1 align="center">Lynx Assistant — Changelog</h1>
 
 <p align="center">
-  <b>Assistente desktop inteligente e open source</b>.<br/>
-  Automação local, privada e extensível, feita para produtividade real.
+  Histórico oficial de versões e atualizações do <b>Lynx Assistant</b>.<br/>
+  Este documento segue o padrão de versionamento <b>Semantic Versioning (SemVer)</b>.
 </p>
-
----
-
-## Sobre este documento
-
-Este changelog segue o padrão <a href="https://keepachangelog.com/pt-BR/1.0.0/">Keep a Changelog</a>  
-e adota o <a href="https://semver.org/lang/pt-BR/">Versionamento Semântico</a> (SemVer).
-
-Cada versão registrada representa um marco funcional, técnico e visual do Lynx Assistant.
 
 ---
 
