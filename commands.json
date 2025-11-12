@@ -8,6 +8,30 @@
                 "msyc"
             ],
             "url": "https://music.youtube.com/"
+        },
+        {
+            "type": "external",
+            "name": "youtube-music",
+            "keywords": [
+                "ytmsc",
+                "music",
+                "musyc",
+                "msc",
+                "mysc"
+            ],
+            "url": "https://music.youtube.com/"
+        },
+        {
+            "type": "external",
+            "name": "youtube-music",
+            "keywords": [
+                "ytmsc",
+                "music",
+                "musyc",
+                "msc",
+                "mysc"
+            ],
+            "url": "https://music.youtube.com/"
         }
     ]
 }

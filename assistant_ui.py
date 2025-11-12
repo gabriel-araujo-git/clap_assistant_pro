@@ -184,7 +184,34 @@ class CommandEngine:
     def open_browser(self): subprocess.Popen("chrome", shell=True)
     def open_explorer(self): subprocess.Popen("explorer", shell=True)
     def open_notepad(self): subprocess.Popen("notepad.exe", shell=True)
+    def add_custom_command(self, cmd_data):
+        """Adiciona e salva um comando personalizado dinamicamente."""
+        # Garante arquivo
+        if not os.path.exists("commands.json"):
+            with open("commands.json", "w", encoding="utf-8") as f:
+                json.dump({"commands": []}, f, indent=4, ensure_ascii=False)
 
+        # Salva no JSON
+        with open("commands.json", "r+", encoding="utf-8") as f:
+            try:
+                data = json.load(f)
+            except json.JSONDecodeError:
+                data = {"commands": []}
+
+            data["commands"].append(cmd_data)
+            f.seek(0)
+            json.dump(data, f, indent=4, ensure_ascii=False)
+            f.truncate()
+
+        # Adiciona na memória
+        if cmd_data["type"] == "internal":
+            func = lambda path=cmd_data["path"]: subprocess.Popen(path, shell=True)
+        else:
+            func = lambda url=cmd_data["url"]: webbrowser.open(url)
+        self.commands[tuple(cmd_data["keywords"])] = func
+
+    
+    
 # ---------------------------
 # UI: Lynx
 # ---------------------------
@@ -302,7 +329,9 @@ class LynxApp(ctk.CTk):
     # Outros métodos
     # ---------------------------
     def hide_window(self):
-        self.withdraw()
+        self.quit()
+        os._exit(0)
+
 
     def show_help(self):
         h = Toplevel(self)
@@ -480,8 +509,7 @@ class LynxApp(ctk.CTk):
                     json.dump(data, f, indent=4, ensure_ascii=False)
                     f.truncate()
 
-                engine.commands.clear()
-                engine.__init__()
+                engine.add_custom_command(cmd_data)
 
                 messagebox.showinfo("Sucesso", f"Comando '{name}' salvo com sucesso!")
                 win.destroy()
@@ -497,16 +525,25 @@ class LynxApp(ctk.CTk):
 # Tray Icon
 # ---------------------------
 def create_tray(app):
-    def on_show(icon, item): app.deiconify()
+    def on_show(icon, item):
+        app.deiconify()
+
     def on_quit(icon, item):
-        icon.stop()
-        try: app.destroy()
-        except: pass
+        try:
+            icon.stop()  # para o tray loop
+            app.quit()   # encerra o mainloop do Tkinter
+            os._exit(0)  # força término completo do processo
+        except Exception:
+            os._exit(0)
 
     image = Image.new("RGB", (64, 64), (0, 153, 255))
-    menu = Menu(MenuItem("Mostrar Lynx", on_show), MenuItem("Sair", on_quit))
+    menu = Menu(
+        MenuItem("Mostrar Lynx", on_show),
+        MenuItem("Sair", on_quit)
+    )
     icon = Icon("Lynx", image, "Lynx Assistant", menu)
     icon.run()
+
 
 # ---------------------------
 # Run
