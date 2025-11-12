@@ -136,11 +136,12 @@ O Lynx salva as informações automaticamente em `commands.json`.
 
 ## Contribuição
 
-Contribuições são bem-vindas.  
-Consulte o arquivo [CONTRIBUTING.md](CONTRIBUTING.md) antes de enviar um *pull request*.
+Contribuições são bem-vindas. Consulte o arquivo [CONTRIBUTING.md](CONTRIBUTING.md) 
+antes de enviar um pull request.
+
 ------------------------------------------------------------------------
 
 ## Licença
 
-Distribuído sob a licença [MIT](LICENSE).  
-Veja mais detalhes no arquivo [LICENSE](LICENSE).
+Distribuído sob a licença MIT. Consulte o arquivo [MIT](LICENSE). para mais
+detalhes.
