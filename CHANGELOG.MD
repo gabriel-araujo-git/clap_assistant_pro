@@ -7,11 +7,6 @@
 
 <h1 align="center">Histórico de Versões — Lynx Assistant</h1>
 
-<p align="center">
-  <b>Assistente desktop inteligente e open source</b>.<br/>
-  Automação local, privada e extensível, feita para produtividade real.
-</p>
-
 ---
 
 ## Sobre este documento
