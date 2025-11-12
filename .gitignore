@@ -39,6 +39,8 @@ dist/
 # --- Configs locais do projeto ---
 config.json
 settings.json
+commands.json
+
 
 # --- Backup de execução local ---
 # (caso você gere logs ou backups do assistant)
@@ -50,4 +52,5 @@ output_*/
 # Caso gere ícones temporários
 icon_temp_*
 
-*.ico
+
+*.html
