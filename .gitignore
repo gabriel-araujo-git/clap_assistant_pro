@@ -49,3 +49,5 @@ output_*/
 # --- Pystray ---
 # Caso gere ícones temporários
 icon_temp_*
+
+*.ico
