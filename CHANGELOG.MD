@@ -22,6 +22,16 @@ Cada versão registrada representa um marco funcional, técnico e visual do Lynx
 
 ---
 
+## v1.1.1 — 12 de Novembro de 2025
+### Melhorias
+- Adicionado salvamento dinâmico de comandos personalizados, permitindo uso imediato sem reiniciar o aplicativo.
+
+### Correções
+- Corrigido o problema em que o processo do Lynx continuava executando em segundo plano após o fechamento.
+- Implementado encerramento completo do tray e das threads ao sair do aplicativo, garantindo liberação total de recursos.
+
+
+
 ## v1.1.0 — 07 de Novembro de 2025
 ### Atualização de Interface e Novos Recursos
 
