@@ -31,7 +31,6 @@ Cada versão registrada representa um marco funcional, técnico e visual do Lynx
 - Implementado encerramento completo do tray e das threads ao sair do aplicativo, garantindo liberação total de recursos.
 
 
-
 ## v1.1.0 — 07 de Novembro de 2025
 ### Atualização de Interface e Novos Recursos
 

@@ -248,7 +248,7 @@ class LynxApp(ctk.CTk):
             header,
             text="Lynx",
             font=ctk.CTkFont(size=18, weight="bold"),
-            text_color="#2db7ff"
+            text_color="#05a4fa"
         )
         self.label_title.pack(side="left")
 
@@ -285,9 +285,9 @@ class LynxApp(ctk.CTk):
 
         self.btn_close = ctk.CTkButton(btn_frame, text="Fechar", width=80, command=self.hide_window)
         self.btn_close.grid(row=0, column=0, padx=6)
-        self.btn_help = ctk.CTkButton(btn_frame, text="Ajuda", width=80, command=self.show_help)
+        self.btn_help = ctk.CTkButton(btn_frame, text="ⓘ Ajuda", width=80, command=self.show_help)
         self.btn_help.grid(row=0, column=1, padx=6)
-        self.btn_add = ctk.CTkButton(btn_frame, text="Adicionar", width=80, command=self.show_add_command)
+        self.btn_add = ctk.CTkButton(btn_frame, text="➕Adicionar Comando", width=80, command=self.show_add_command)
         self.btn_add.grid(row=0, column=2, padx=6)
 
         self.protocol("WM_DELETE_WINDOW", self.hide_window)
