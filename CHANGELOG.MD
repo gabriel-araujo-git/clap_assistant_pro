@@ -7,7 +7,7 @@
 
 <h1 align="center">Histórico de Versões — Lynx Assistant</h1>
 
-
+---
 
 ## Sobre este documento
 
