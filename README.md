@@ -13,13 +13,16 @@
 </p>
 
 <div align="center">
-  <img src="https://img.shields.io/github/license/gabriel-araujo-git/lynx-assistant?style=flat-square"/>
+  <img src="https://img.shields.io/github/license/gabriel-araujo-git/lynx-assistant?style=flat-square&logo=github"/>
   <img src="https://img.shields.io/github/v/release/gabriel-araujo-git/lynx-assistant?style=flat-square&color=brightgreen"/>
   <img src="https://img.shields.io/github/last-commit/gabriel-araujo-git/lynx-assistant?style=flat-square"/>
   <img src="https://img.shields.io/github/issues/gabriel-araujo-git/lynx-assistant?style=flat-square"/>
-  <img src="https://img.shields.io/github/pull-requests/gabriel-araujo-git/lynx-assistant?style=flat-square"/>
-  <img src="https://img.shields.io/badge/Python-3.10+-3776AB.svg?style=flat-square&logo=python&logoColor=white"/>
+  <img src="https://img.shields.io/github/issues-pr/gabriel-araujo-git/lynx-assistant?style=flat-square"/>
+  <img src="https://img.shields.io/github/stars/gabriel-araujo-git/lynx-assistant?style=flat-square&color=yellow"/>
+  <img src="https://img.shields.io/github/downloads/gabriel-araujo-git/lynx-assistant/total?style=flat-square&color=blue"/>
+  <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB.svg?style=flat-square&logo=python&logoColor=white"/>
 </div>
+
 
 ---
 
