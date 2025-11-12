@@ -9,7 +9,10 @@
 
 <p align="center">
   Histórico oficial de versões e atualizações do <b>Lynx Assistant</b>.<br/>
-  Este documento segue o padrão de versionamento <b>Semantic Versioning (SemVer)</b>.
+  Este changelog segue o padrão <a href="https://keepachangelog.com/pt-BR/1.0.0/">Keep a Changelog</a>  
+  e adota o <a href="https://semver.org/lang/pt-BR/">Versionamento Semântico</a> (SemVer).
+
+  Cada versão registrada representa um marco funcional, técnico e visual do Lynx Assistant.
 </p>
 
 ---
