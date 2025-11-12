@@ -1,11 +1,18 @@
-# Contribuindo para o Lynx Assistant
+<!-- Banner -->
+<div align="center">
+  <img src="https://img.shields.io/badge/Lynx%20Assistant-Contributing-%231a1a1a.svg?style=for-the-badge&logo=github&logoColor=white" height="32"/>
+</div>
 
-Obrigado por querer contribuir com o **Lynx Assistant**!  
-Este projeto é open source e toda ajuda é bem-vinda — de correções simples até novas ideias de funcionalidades.
+<h1 align="center">Guia de Contribuição — Lynx Assistant</h1>
+
+<p align="center">
+  O <b>Lynx Assistant</b> é um projeto open source que busca tornar automações de desktop mais acessíveis e eficientes.<br/>
+  Toda contribuição é bem-vinda — de pequenas correções a grandes ideias.
+</p>
 
 ---
 
-## 🧩 Como contribuir
+## Como contribuir
 
 1. **Fork** o repositório no GitHub.
 2. Crie uma nova branch para sua contribuição:
@@ -21,7 +28,7 @@ Este projeto é open source e toda ajuda é bem-vinda — de correções simples
 
 ---
 
-## 🧱 Diretrizes de código
+## Diretrizes de código
 
 - Mantenha a consistência de estilo com o restante do código (`PEP8` + nomes descritivos).
 - Evite dependências desnecessárias.
@@ -34,7 +41,7 @@ Este projeto é open source e toda ajuda é bem-vinda — de correções simples
 
 ---
 
-## 🧠 Testando suas alterações
+## Testando suas alterações
 
 Antes de enviar, verifique:
 - Se o comando foi adicionado corretamente no `commands.json`.
@@ -43,7 +50,7 @@ Antes de enviar, verifique:
 
 ---
 
-## 💬 Dúvidas ou sugestões
+## Dúvidas ou sugestões
 
 Abra uma **issue** descrevendo sua ideia ou problema.  
 Todos os feedbacks são bem-vindos — o objetivo é fazer o Lynx crescer com a comunidade!
