@@ -17,6 +17,28 @@ e adota o <a href="https://semver.org/lang/pt-BR/">Versionamento Semântico</a> 
 Cada versão registrada representa um marco funcional, técnico e visual do Lynx Assistant.
 
 ---
+## [1.1.0] - 2025-11-13
+
+### Added
+- Adicionado `codeql.yml` para integração de análise de segurança automatizada.
+- Adicionado `dependabot.yml` para controle e atualização de dependências.
+- Revisado o `SECURITY.md` com novas diretrizes e seções.
+- Incluídos novos arquivos de documentação técnica:
+  - `docs/setup.md`
+  - `docs/usage.md`
+  - `docs/architecture.md`
+  - `docs/roadmap.md`
+- Preparado o **Manual de Comandos (Wiki / HTML)** para futura publicação via GitHub Pages.
+
+### Changed
+- **Refatorada a estrutura do projeto** — reorganização de pastas, nomes e arquitetura interna  
+  *(commits: Refactor/estrutura projeto #13, #16)*
+- Atualizado o pipeline do **Dependabot** com novas regras.
+- Ajustes gerais nas configurações internas e documentação complementar.
+
+### Fixed
+- Corrigidos caminhos e nomes de pastas incorretos *(#10)*.
+- Pequenas correções de estrutura e formatação em arquivos de suporte e documentação.
 
 ## v1.1.1 — 12 de Novembro de 2025
 ### Melhorias
