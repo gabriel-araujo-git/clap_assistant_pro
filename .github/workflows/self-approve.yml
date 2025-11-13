@@ -1,0 +1,31 @@
+# ------------------------------------------------------------
+# Lynx Assistant - Auto Approve Workflow
+# ------------------------------------------------------------
+# Objetivo:
+# Automatiza a aprovação de Pull Requests criados pelo próprio
+# mantenedor principal (gabriel-araujo-git), permitindo merge
+# rápido sem comprometer as validações de segurança e qualidade.
+# ------------------------------------------------------------
+
+name: Auto Approve Self PRs
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  auto-approve:
+    name: Auto Approve PR
+    runs-on: ubuntu-latest
+
+    # Executa somente se o autor do PR for o mantenedor principal.
+    if: github.actor == 'gabriel-araujo-git'
+
+    steps:
+      - name: Auto approve pull request
+        uses: hmarr/auto-approve-action@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
