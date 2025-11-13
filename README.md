@@ -132,6 +132,20 @@ O Lynx salva as informações automaticamente em `commands.json`.
 -   Pillow
 -   Subprocess / Webbrowser
 
+
+------------------------------------------------------------------------
+
+## Documentação Detalhada
+
+A documentação técnica foi dividida em seções independentes dentro do diretório `docs/` para facilitar a navegação e manutenção:
+
+- [Guia de Instalação e Configuração](docs/setup.md)
+- [Guia de Uso e Exemplos](docs/usage.md)
+- [Arquitetura e Estrutura Interna](docs/architecture.md)
+- [Roadmap e Planejamento Futuro](docs/roadmap.md)
+
+Esses arquivos seguem o mesmo padrão de estilo do projeto principal, utilizando badges informativas e linguagem técnica consistente.
+
 ------------------------------------------------------------------------
 
 ## Contribuição
