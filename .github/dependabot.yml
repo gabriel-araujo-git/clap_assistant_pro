@@ -1,10 +1,11 @@
 version: 2
 updates:
   - package-ecosystem: "pip"
-    directory: "/"               # raiz do repositório
+    directory: "/" # raiz do repositório
     schedule:
-      interval: "weekly"         # Frequência: daily / weekly / monthly
+      interval: "weekly" # Frequência: daily / weekly / monthly
     open-pull-requests-limit: 5
     ignore:
-      - dependency-name: "some-package"   # opcional: pacotes que você não quer atualizar
-        versions: ["<2.0.0"]
+      - dependency-name: "some-package" # opcional: pacotes que você não quer atualizar
+        versions:
+          - "<2.0.0"
