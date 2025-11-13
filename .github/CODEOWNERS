@@ -1,0 +1,21 @@
+# ------------------------------------------------------------
+# Lynx Assistant - CODEOWNERS
+# ------------------------------------------------------------
+# Este arquivo define os responsáveis por cada parte do projeto.
+# O GitHub usa essas regras para:
+#  - Solicitar automaticamente revisões aos responsáveis;
+#  - Controlar aprovações em Pull Requests;
+#  - Integrar com branch protection e CodeQL.
+# ------------------------------------------------------------
+
+# Mantenedor principal e responsável por merges e revisões.
+*       @gabriel-araujo-git
+
+# Diretório de documentação e imagens.
+docs/   @gabriel-araujo-git
+
+# Scripts principais da aplicação.
+*.py    @gabriel-araujo-git
+
+# Configurações e workflows do GitHub.
+.github/ @gabriel-araujo-git
