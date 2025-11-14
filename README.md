@@ -59,15 +59,28 @@ no desktop.
 -   **Extensível** --- pronto para receber novas engines e módulos.
 
 ------------------------------------------------------------------------
-
 ## Interface
 
-  ---------------------------------------------------------------------------------------------------------
-  Tela Principal                      Ajuda Expandida                     Adicionar Comando
-  ----------------------------------- ----------------------------------- ---------------------------------
-  ![Main](docs/screenshot_main.png)   ![Help](docs/screenshot_help.png)   ![Add](docs/screenshot_add.png)
+<div align="center" style="display: flex; gap: 20px; justify-content: center;">
 
-  ---------------------------------------------------------------------------------------------------------
+  <div style="text-align: center;">
+    <img src="docs/screenshot_main.png" width="300" style="border-radius: 8px; box-shadow: 0 0 8px #0003;"/>
+    <p><b>Tela Principal</b></p>
+  </div>
+
+  <div style="text-align: center;">
+    <img src="docs/screenshot_help.png" width="300" style="border-radius: 8px; box-shadow: 0 0 8px #0003;"/>
+    <p><b>Ajuda Expandida</b></p>
+  </div>
+
+  <div style="text-align: center;">
+    <img src="docs/screenshot_add.png" width="300" style="border-radius: 8px; box-shadow: 0 0 8px #0003;"/>
+    <p><b>Adicionar Comando</b></p>
+  </div>
+
+</div>
+
+
 
 ------------------------------------------------------------------------
 
