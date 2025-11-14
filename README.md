@@ -70,12 +70,12 @@ no desktop.
 
   <div style="text-align: center;">
     <img src="docs/screenshot_help.png" width="300" style="border-radius: 8px; box-shadow: 0 0 8px #0003;"/>
-    <p><b>Ajuda Expandida</b></p>
+    <p><b>Adicionar Comando</b></p>
   </div>
 
   <div style="text-align: center;">
     <img src="docs/screenshot_add.png" width="300" style="border-radius: 8px; box-shadow: 0 0 8px #0003;"/>
-    <p><b>Adicionar Comando</b></p>
+    <p><b>Ajuda Expandida</b></p>
   </div>
 
 </div>
