@@ -17,6 +17,33 @@ e adota o <a href="https://semver.org/lang/pt-BR/">Versionamento Semântico</a> 
 Cada versão registrada representa um marco funcional, técnico e visual do Lynx Assistant.
 
 ---
+## [1.2.0] – 2025-11-14
+
+### Added  
+- Refatorada a interface **“Adicionar Comando”** para usar CustomTkinter, com layout mais intuitivo, tema escuro e responsivo.  
+- Implementada nova funcionalidade de **gerenciamento de palavras-chave** (keywords) ao adicionar comandos: permite definir múltiplos termos de ativação.  
+- Adicionado salvamento em tempo real para `commands.json` na tela de adição de comando, sem necessidade de reiniciar o aplicativo.  
+- Refatorada a interface **“Ajuda”** com visual aprimorado, links diretos para documentação e melhoria na navegação das seções de suporte.  
+- Atualizada a lógica de filtragem/seleção de comandos recentes dentro da UI para facilitar reutilização.
+
+### Changed  
+- Reorganizada a estrutura da tela “Adicionar Comando”: agora há separação clara entre comandos internos (programas) e externos (sites), com radiobuttons estilizados.  
+- Ajustes de UX: janelas “Toplevel” agora possuem `-topmost` habilitado, garantindo que fiquem em foco durante inclusão de comandos.  
+- Código reorganizado para otimizar importações duplicadas (ex: múltiplas importações de `filedialog`, `messagebox`).  
+- Atualizado tratamento de erros/validações na UI de adição: verificação de formato de URL, existência de caminho de arquivo, e alertas mais claros aos usuários.
+
+### Fixed  
+- Corrigido bug onde ao sair da janela “Adicionar Comando”, o foco voltava para o aplicativo principal e causava scroll indesejado.  
+- Ajustado problema onde alguns campos da UI apareciam com proporção incorreta ou sobreposição em monitores múltiplos.  
+- Melhorada a estabilidade do carregamento de `commands.json` após adição de comando, evitando duplicações ou sobrescritas indevidas.
+
+### Documentation  
+- Atualizada a seção “Uso” no `docs/usage.md` para refletir as novas telas.  
+- Incluída captura de tela da interface “Adicionar Comando” atualizada no diretório `docs/`.  
+- `README.md` atualizado para mencionar suporte de keywords e melhor experiência UX nas telas de ajuda/comando.
+
+
+
 ## [1.1.0] - 2025-11-13
 
 ### Added
