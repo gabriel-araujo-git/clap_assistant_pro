@@ -334,114 +334,110 @@ class LynxApp(ctk.CTk):
 
 
     def show_help(self):
-        h = Toplevel(self)
-        h.title("Lynx - Comandos e Dicas")
-        h.geometry("560x420")
-        h.configure(bg="#1b1d1f")
-        h.attributes("-topmost", True)
-
-        # ---------------------------
-        # Container com Scroll
-        # ---------------------------
-        container = Frame(h, bg="#1b1d1f")
-        container.pack(fill=BOTH, expand=True, padx=10, pady=10)
-
-        scrollbar = Scrollbar(container)
-        scrollbar.pack(side=RIGHT, fill=Y)
-
-        text_box = Text(
-            container,
-            wrap="word",
-            bg="#1b1d1f",
-            fg="#d0d0d0",
-            insertbackground="white",
-            font=("Consolas", 11),
-            yscrollcommand=scrollbar.set,
-            relief="flat",
-            padx=14,
-            pady=10,
-        )
-        text_box.pack(side=LEFT, fill=BOTH, expand=True)
-        scrollbar.config(command=text_box.yview)
-
-        # ---------------------------
-        # Função auxiliar para escrever seções
-        # ---------------------------
-        def add_section(title, emoji, commands, color="#2db7ff"):
-            text_box.insert(END, f"\n{emoji} ", ("emoji",))
-            text_box.insert(END, f"{title}\n", ("section_title",))
-            for keys in commands:
-                sample = ", ".join(keys[:3])
-                text_box.insert(END, f"   • {sample}\n", ("command",))
-
-        # ---------------------------
-        # Separar comandos por categoria
-        # ---------------------------
-        system_cmds, site_cmds, app_cmds, custom_cmds = [], [], [], []
-
-        for keys, func in engine.commands.items():
-            first = next(iter(keys))
-            if "http" in str(func):  # sites externos
-                site_cmds.append(keys)
-            elif any(x in first for x in ("explorer", "notepad", "cmd", "calc", "taskmgr", "shutdown", "reiniciar")):
-                system_cmds.append(keys)
-            elif any(x in first for x in ("ln", "vscode", "studio", "prd", "teste")):
-                app_cmds.append(keys)
-            else:
-                custom_cmds.append(keys)
-
-        # ---------------------------
-        # Título
-        # ---------------------------
-        text_box.insert(END, "⚡ LYNX - GUIA DE COMANDOS RÁPIDOS ⚡\n", ("title",))
         
 
         # ---------------------------
-        # Seções principais
+        # Janela principal
         # ---------------------------
-        if app_cmds: add_section("Programas / Ambientes", "💻", app_cmds, "#2db7ff")
-        if site_cmds: add_section("Sites e Ferramentas Online", "🌐", site_cmds, "#00c896")
-        if system_cmds: add_section("Comandos do Sistema", "⚙️", system_cmds, "#ffaa00")
-        if custom_cmds: add_section("Comandos Personalizados", "🧠", custom_cmds, "#ff66cc")
+        h = ctk.CTkToplevel(self)
+        h.title("Lynx — Ajuda e Comandos")
+        h.geometry("650x540")
+        h.attributes("-topmost", True)
+        h.configure(fg_color="#101214")
+
 
         # ---------------------------
-        # Dicas e atalhos
+        # Barra de busca
         # ---------------------------
-        text_box.insert(END, "\n💡 DICAS ÚTEIS:\n", ("section_title",))
-        text_box.insert(END, " - Use sinônimos como 'abrir', 'entrar em', etc.\n")
-        text_box.insert(END, " - Adicione novos comandos no botão 'Adicionar'.\n")
-        text_box.insert(END, " - O Lynx reconhece tanto programas quanto sites.\n")
-        text_box.insert(END, " - Os comandos são salvos em 'commands.json'.\n\n")
+        search_frame = ctk.CTkFrame(h, fg_color="#15171a", corner_radius=10)
+        search_frame.pack(fill="x", padx=12, pady=(12, 6))
 
-        text_box.insert(END, "⌨️ ATALHOS:\n", ("section_title",))
-        text_box.insert(END, " - ENTER → Executar comando\n")
-        text_box.insert(END, " - ESC → Fechar janela\n")
 
-        # ---------------------------
-        # Estilos de texto
-        # ---------------------------
-        text_box.tag_configure("title", foreground="#2db7ff", font=("Consolas", 13, "bold"))
-        text_box.tag_configure("section_title", foreground="#00b4ff", font=("Consolas", 12, "bold"))
-        text_box.tag_configure("command", foreground="#d0d0d0", font=("Consolas", 10))
-        text_box.tag_configure("emoji", font=("Consolas", 12))
-        text_box.config(state="disabled")
+        search_entry = ctk.CTkEntry(
+        search_frame,
+        placeholder_text="Buscar comando, alias ou descrição...",
+        height=36,
+        corner_radius=10
+        )
+        search_entry.pack(fill="x", padx=12, pady=12)
+
 
         # ---------------------------
-        # Botão inferior
+        # Área scrollável
         # ---------------------------
-        def open_json():
-            path = os.path.abspath("commands.json")
-            if os.path.exists(path):
-                os.startfile(path)
+        scroll_frame = ctk.CTkScrollableFrame(h, fg_color="#15171a", corner_radius=12)
+        scroll_frame.pack(fill="both", expand=True, padx=12, pady=6)
+
+
+        # ---------------------------
+        # Transformar os comandos do engine para exibição
+        # ---------------------------
+        command_cards = []
+
+
+        for keys, func in engine.commands.items():
+            main_cmd = list(keys)[0]
+            aliases = ", ".join(keys[1:]) if len(keys) > 1 else "—"
+
+
+            if "http" in str(func) or "open_site" in str(func):
+                action = "Abre um site"
+            elif "subprocess" in func.__code__.co_names:
+                action = "Executa um programa"
             else:
-                with open(path, "w", encoding="utf-8") as f:
-                    json.dump({"commands": []}, f, indent=4, ensure_ascii=False)
-                os.startfile(path)
-
-        btn = ctk.CTkButton(h, text="Abrir commands.json", command=open_json, width=220)
-        btn.pack(pady=10)
+                action = "Ação interna"
 
 
+            card = ctk.CTkFrame(scroll_frame, fg_color="#1b1e21", corner_radius=10)
+            card.pack(fill="x", padx=8, pady=6)
+
+
+            lbl_cmd = ctk.CTkLabel(
+            card,
+            text=main_cmd,
+            font=ctk.CTkFont(size=15, weight="bold"),
+            text_color="#00b4ff"
+            )
+            lbl_cmd.pack(anchor="w", padx=12, pady=(10, 2))
+
+
+            lbl_alias = ctk.CTkLabel(
+            card,
+            text=f"Aliases: {aliases}",
+            font=ctk.CTkFont(size=12),
+            text_color="#a8b3bd"
+            )
+            lbl_alias.pack(anchor="w", padx=12)
+
+
+            lbl_action = ctk.CTkLabel(
+            card,
+            text=f"Ação: {action}",
+            font=ctk.CTkFont(size=12),
+            text_color="#d0d0d0"
+            )
+            lbl_action.pack(anchor="w", padx=12, pady=(0, 10))
+
+
+            command_cards.append((card, main_cmd, aliases, action))
+
+
+        # ---------------------------
+        # Função de filtro
+        # ---------------------------
+        def apply_filter(event=None):
+            text = search_entry.get().lower().strip()
+            for card, cmd, alias, action in command_cards:
+                data = f"{cmd} {alias} {action}".lower()
+                card.pack_forget()
+                if text in data:
+                    card.pack(fill="x", padx=8, pady=6)
+
+
+        search_entry.bind("<KeyRelease>", apply_filter)
+
+
+        
     def show_add_command(self):
         from tkinter import Toplevel, Label, Entry, Button, Radiobutton, StringVar, filedialog, messagebox
 
