@@ -10,6 +10,8 @@ from PIL import Image
 from tkinter import filedialog, messagebox
 from tkinter import Toplevel, Text, Scrollbar, END, RIGHT, Y, LEFT, BOTH, Frame
 from tkinter import Toplevel, Label, Entry, Button, Radiobutton, StringVar, filedialog, messagebox
+import tkinter as tk
+
 import customtkinter as ctk
 from tkinter import filedialog, messagebox, Frame, Label
 import os
@@ -447,9 +449,10 @@ class LynxApp(ctk.CTk):
 
 
     def show_add_command(self):
-       
 
+        # ---------------------------
         # Helpers
+        # ---------------------------
         def is_url(s: str):
             try:
                 p = urlparse(s)
@@ -460,114 +463,116 @@ class LynxApp(ctk.CTk):
         def file_exists(s: str):
             return os.path.exists(s) and os.path.isfile(s)
 
-        def guess_type_from_path(s: str):
+        def guess_type(s: str):
             if is_url(s):
                 return "external"
             if file_exists(s):
                 return "internal"
             return None
 
-        def load_commands_json():
+        def load_json():
             if not os.path.exists("commands.json"):
                 with open("commands.json", "w", encoding="utf-8") as f:
                     json.dump({"commands": [], "recent": []}, f, indent=4, ensure_ascii=False)
+
             with open("commands.json", "r", encoding="utf-8") as f:
                 try:
                     return json.load(f)
                 except json.JSONDecodeError:
                     return {"commands": [], "recent": []}
 
-        def save_commands_json(data):
+        def save_json(data):
             with open("commands.json", "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=4, ensure_ascii=False)
 
         def add_recent(name):
-            data = load_commands_json()
+            data = load_json()
             rec = data.get("recent", [])
             if name in rec:
                 rec.remove(name)
             rec.insert(0, name)
             data["recent"] = rec[:6]
-            save_commands_json(data)
+            save_json(data)
 
-        # Build window
+        # ---------------------------
+        # Window
+        # ---------------------------
         win = ctk.CTkToplevel(self)
         win.title("Adicionar Comando — Lynx")
-        win.geometry("640x520")
-        win.transient(self)
+        win.geometry("650x520")
         win.attributes("-topmost", True)
         win.configure(fg_color="#0f1113")
+        win.selected_icon = None
 
+        # ---------------------------
         # Header
-        header = ctk.CTkFrame(win, fg_color="transparent")
-        header.pack(fill="x", padx=12, pady=(12, 6))
-        lbl_title = ctk.CTkLabel(header, text="Adicionar Comando", font=ctk.CTkFont(size=16, weight="bold"), text_color="#05a4fa")
-        lbl_title.pack(side="left")
+        # ---------------------------
+        lbl = ctk.CTkLabel(
+            win,
+            text="Adicionar novo comando",
+            font=ctk.CTkFont(size=18, weight="bold"),
+            text_color="#05a4fa"
+        )
+        lbl.pack(pady=(12, 4))
 
-        # Mode toggle
-        mode_var = ctk.StringVar(value="simple")
-        def set_mode(m):
-            mode_var.set(m)
-            if m == "simple":
-                advanced_frame.pack_forget()
-                simple_frame.pack(fill="x", padx=12, pady=(8, 6))
-            else:
-                simple_frame.pack_forget()
-                advanced_frame.pack(fill="x", padx=12, pady=(8, 6))
-        mode_switch = ctk.CTkSegmentedButton(header, values=["simple", "advanced"], command=set_mode)
-        mode_switch.set("simple")
-        mode_switch.pack(side="right")
+        # ---------------------------
+        # Main frame (tela única)
+        # ---------------------------
+        main = ctk.CTkFrame(win, fg_color="#101214", corner_radius=10)
+        main.pack(fill="both", expand=True, padx=12, pady=12)
 
-        # Main area
-        content = ctk.CTkFrame(win, fg_color="transparent")
-        content.pack(fill="both", expand=True, padx=12, pady=(0, 12))
-
-        # ---------- Simple frame ----------
-        simple_frame = ctk.CTkFrame(content, fg_color="#101214", corner_radius=8)
-        simple_frame.pack(fill="x", pady=(8, 6))
-
-        lbl_name = ctk.CTkLabel(simple_frame, text="Nome do comando", anchor="w")
-        lbl_name.pack(fill="x", padx=12, pady=(10, 2))
-        entry_name = ctk.CTkEntry(simple_frame)
+        # ---- Nome ----
+        lbl_name = ctk.CTkLabel(main, text="Nome do comando", anchor="w")
+        lbl_name.pack(fill="x", padx=12, pady=(12, 4))
+        entry_name = ctk.CTkEntry(main)
         entry_name.pack(fill="x", padx=12)
 
-        lbl_keywords = ctk.CTkLabel(simple_frame, text="Palavras-chave (digite e pressione Enter)", anchor="w")
-        lbl_keywords.pack(fill="x", padx=12, pady=(8, 2))
+        # ---- Keywords ----
+        lbl_keywords = ctk.CTkLabel(main, text="Palavras-chave (Enter para adicionar)", anchor="w")
+        lbl_keywords.pack(fill="x", padx=12, pady=(12, 4))
 
-        chips_frame = ctk.CTkFrame(simple_frame, fg_color="transparent")
-        chips_frame.pack(fill="x", padx=12, pady=(0, 6))
+        keyword_var = tk.StringVar()
+        entry_kw = ctk.CTkEntry(main, textvariable=keyword_var)
+        entry_kw.pack(fill="x", padx=12)
 
-        keyword_var = ctk.StringVar()
-        entry_kw = ctk.CTkEntry(simple_frame, textvariable=keyword_var)
-        entry_kw.pack(fill="x", padx=12, pady=(0, 6))
+        chips_frame = ctk.CTkFrame(main, fg_color="transparent")
+        chips_frame.pack(fill="x", padx=12, pady=(6, 10))
 
-        # chips storage
         chips = []
 
         def redraw_chips():
             for w in chips_frame.winfo_children():
                 w.destroy()
-            for k in chips:
-                chip_wrap = Frame(chips_frame, bg="#101217")
-                chip_wrap.pack(side="left", padx=6, pady=6)
-                lbl = Label(chip_wrap, text=k, bg="#101217", fg="#cbd5db", padx=8, pady=4)
-                lbl.pack(side="left")
-                btn = ctk.CTkButton(chip_wrap, text="x", width=26, height=22,
-                                    command=lambda key=k: remove_chip(key), corner_radius=8)
-                btn.pack(side="left", padx=(6,0))
 
-        def add_chip_from_entry(event=None):
+            for k in chips:
+                wrap = Frame(chips_frame, bg="#101217")
+                wrap.pack(side="left", padx=6, pady=6)
+                Label(wrap, text=k, fg="#cbd5db", bg="#101217", padx=8, pady=4).pack(side="left")
+                ctk.CTkButton(
+                    wrap,
+                    text="x",
+                    width=26,
+                    height=22,
+                    corner_radius=8,
+                    command=lambda key=k: remove_chip(key)
+                ).pack(side="left", padx=(6,0))
+
+        def add_chip(event=None):
             v = entry_kw.get().strip().lower()
             if not v:
                 return
+
             parts = [p.strip() for p in v.replace(";",",").split(",") if p.strip()]
             changed = False
+
             for p in parts:
-                if p and p not in chips:
+                if p not in chips:
                     chips.append(p)
                     changed = True
+
             if changed:
                 redraw_chips()
+
             entry_kw.delete(0, "end")
 
         def remove_chip(key):
@@ -575,260 +580,214 @@ class LynxApp(ctk.CTk):
                 chips.remove(key)
                 redraw_chips()
 
-        entry_kw.bind("<Return>", add_chip_from_entry)
+        entry_kw.bind("<Return>", add_chip)
 
-        lbl_path = ctk.CTkLabel(simple_frame, text="Caminho do programa ou URL", anchor="w")
-        lbl_path.pack(fill="x", padx=12, pady=(8, 2))
-        entry_path = ctk.CTkEntry(simple_frame)
+        # ---- Caminho/URL ----
+        lbl_path = ctk.CTkLabel(main, text="Caminho ou URL", anchor="w")
+        lbl_path.pack(fill="x", padx=12, pady=(4, 4))
+
+        entry_path = ctk.CTkEntry(main)
         entry_path.pack(fill="x", padx=12)
 
-        # small controls row
-        controls_row = ctk.CTkFrame(simple_frame, fg_color="transparent")
-        controls_row.pack(fill="x", padx=12, pady=(8, 12))
+        # ---- Botões de arquivo e ícone ----
+        row = ctk.CTkFrame(main, fg_color="transparent")
+        row.pack(fill="x", padx=12, pady=(10, 10))
 
         def pick_file():
-            p = filedialog.askopenfilename(title="Selecione o executável ou arquivo")
+            p = filedialog.askopenfilename(title="Selecione o executável")
             if p:
                 entry_path.delete(0, "end")
                 entry_path.insert(0, p)
-                detect_type_and_icon()
+                detect_type()
 
         def pick_icon():
-            p = filedialog.askopenfilename(title="Selecione um ícone ou imagem (png, ico, jpg)", filetypes=[("Images","*.png;*.ico;*.jpg;*.jpeg")])
+            p = filedialog.askopenfilename(filetypes=[("Imagens", "*.png;*.ico;*.jpg;*.jpeg")])
             if p:
-                load_icon_preview(p)
                 win.selected_icon = p
+                load_icon_preview(p)
 
-        btn_file = ctk.CTkButton(controls_row, text="Selecionar arquivo", width=160, command=pick_file)
-        btn_file.pack(side="left")
+        ctk.CTkButton(row, text="Escolher arquivo", width=150, command=pick_file).pack(side="left")
+        ctk.CTkButton(row, text="Selecionar ícone", width=150, command=pick_icon).pack(side="left", padx=(10,0))
 
-        btn_icon = ctk.CTkButton(controls_row, text="Selecionar ícone", width=140, command=pick_icon)
-        btn_icon.pack(side="left", padx=(8,0))
+        # ---- Preview + type hint ----
+        type_hint = ctk.CTkLabel(main, text="Tipo: —", anchor="w", text_color="#a0a9ad")
+        type_hint.pack(fill="x", padx=12)
 
-        # Type hint label
-        type_hint = ctk.CTkLabel(simple_frame, text="Tipo: —", anchor="w", text_color="#a0a9ad")
-        type_hint.pack(fill="x", padx=12, pady=(0,6))
+        preview = ctk.CTkLabel(main, text="Preview:", anchor="w", justify="left")
+        preview.pack(fill="x", padx=12, pady=(6, 10))
 
-        # Preview area
-        preview_card = ctk.CTkFrame(simple_frame, fg_color="#0f1416", corner_radius=8)
-        preview_card.pack(fill="x", padx=12, pady=(6, 12))
-        preview_lbl = ctk.CTkLabel(preview_card, text="Preview: (preencha os campos)", anchor="w")
-        preview_lbl.pack(fill="x", padx=10, pady=8)
-
-        # History
-        history_card = ctk.CTkFrame(simple_frame, fg_color="transparent")
-        history_card.pack(fill="x", padx=12, pady=(0,12))
-        hist_lbl = ctk.CTkLabel(history_card, text="Últimos comandos (recentes):", anchor="w", text_color="#9aa4ad")
-        hist_lbl.pack(anchor="w")
-        hist_frame = ctk.CTkFrame(history_card, fg_color="transparent")
-        hist_frame.pack(fill="x", pady=(6,0))
-
-        def load_recent():
-            data = load_commands_json()
-            for w in hist_frame.winfo_children():
-                w.destroy()
-            for name in data.get("recent", [])[:6]:
-                b = ctk.CTkButton(hist_frame, text=name, width=120, command=lambda n=name: fill_from_recent(n))
-                b.pack(side="left", padx=6)
-
-        def fill_from_recent(name):
-            data = load_commands_json()
-            for c in data.get("commands", []):
-                if c.get("name") == name:
-                    entry_name.delete(0,"end"); entry_name.insert(0, c.get("name",""))
-                    chips.clear()
-                    for k in c.get("keywords", []):
-                        chips.append(k)
-                    redraw_chips()
-                    if c.get("type") == "internal":
-                        entry_path.delete(0,"end"); entry_path.insert(0, c.get("path",""))
-                    else:
-                        entry_path.delete(0,"end"); entry_path.insert(0, c.get("url",""))
-                    detect_type_and_icon()
-                    break
-
-        load_recent()
-
-        # ---------- Advanced frame ----------
-        advanced_frame = ctk.CTkFrame(content, fg_color="#101214", corner_radius=8)
-        # advanced fields (hidden by default)
-        adv_lbl = ctk.CTkLabel(advanced_frame, text="Modo Avançado — Campos extras", anchor="w")
-        adv_lbl.pack(fill="x", padx=12, pady=(8,2))
-        lbl_desc = ctk.CTkLabel(advanced_frame, text="Descrição (opcional)", anchor="w")
-        lbl_desc.pack(fill="x", padx=12, pady=(6,2))
-        entry_desc = ctk.CTkEntry(advanced_frame)
-        entry_desc.pack(fill="x", padx=12, pady=(0,8))
-
-        lbl_category = ctk.CTkLabel(advanced_frame, text="Categoria (opcional)", anchor="w")
-        lbl_category.pack(fill="x", padx=12, pady=(6,2))
-        category_var = ctk.StringVar(value="other")
-        category_entry = ctk.CTkEntry(advanced_frame, textvariable=category_var)
-        category_entry.pack(fill="x", padx=12, pady=(0,8))
-
-        # Icon preview area
-        icon_preview_frame = ctk.CTkFrame(content, fg_color="transparent")
-        icon_preview_frame.pack(fill="x", padx=12, pady=(0,6))
-        icon_label = ctk.CTkLabel(icon_preview_frame, text="Ícone: (nenhum)", anchor="w", text_color="#9aa4ad")
+        icon_preview_frame = ctk.CTkFrame(main, fg_color="transparent")
+        icon_preview_frame.pack(fill="x", padx=12)
+        icon_label = ctk.CTkLabel(icon_preview_frame, text="Ícone: (nenhum)", anchor="w")
         icon_label.pack(side="left")
-        icon_canvas_holder = ctk.CTkFrame(icon_preview_frame, fg_color="transparent")
-        icon_canvas_holder.pack(side="right")
-        icon_img_label = None
-        win.selected_icon = None
+        icon_holder = ctk.CTkFrame(icon_preview_frame, fg_color="transparent")
+        icon_holder.pack(side="right")
 
         def load_icon_preview(path):
-            nonlocal icon_img_label
+            for w in icon_holder.winfo_children():
+                w.destroy()
             try:
                 img = Image.open(path)
                 img.thumbnail((48,48))
                 tkimg = ImageTk.PhotoImage(img)
-                # destroy old
-                for w in icon_canvas_holder.winfo_children():
-                    w.destroy()
-                l = ctk.CTkLabel(icon_canvas_holder, image=tkimg, text="")
-                l.image = tkimg
-                l.pack()
+                lbl = ctk.CTkLabel(icon_holder, image=tkimg, text="")
+                lbl.image = tkimg
+                lbl.pack()
                 icon_label.configure(text=f"Ícone: {os.path.basename(path)}")
-                win.selected_icon = path
-            except Exception:
-                icon_label.configure(text="Ícone: (falha ao carregar)")
+            except:
+                icon_label.configure(text="Ícone: (erro)")
 
-        def detect_type_and_icon(event=None):
+        # ---- Detectar tipo ----
+        def detect_type(event=None):
             p = entry_path.get().strip()
-            t = guess_type_from_path(p)
+            t = guess_type(p)
+
             if t == "external":
-                type_hint.configure(text="Tipo: Externo (URL)", text_color="#7bd389")
-                category_var.set("web")
+                type_hint.configure(text="Tipo: URL", text_color="#7bd389")
             elif t == "internal":
-                type_hint.configure(text="Tipo: Interno (programa)", text_color="#7bd389")
-                category_var.set("local")
-                # Try to find icon in same folder
-                try:
-                    folder = os.path.dirname(p)
-                    base = os.path.splitext(os.path.basename(p))[0]
-                    for ext in (".ico", ".png", ".jpg", ".jpeg"):
-                        candidate = os.path.join(folder, base + ext)
-                        if os.path.exists(candidate):
-                            load_icon_preview(candidate)
-                            break
-                except Exception:
-                    pass
+                type_hint.configure(text="Tipo: Programa", text_color="#7bd389")
             else:
-                type_hint.configure(text="Tipo: Não detectado", text_color="#d1a3a3")
-            # update preview
+                type_hint.configure(text="Tipo: inválido", text_color="#ff8080")
+
             update_preview()
 
-        entry_path.bind("<FocusOut>", detect_type_and_icon)
-        entry_path.bind("<Return>", detect_type_and_icon)
+        entry_path.bind("<FocusOut>", detect_type)
+        entry_path.bind("<KeyRelease>", lambda e: update_preview())
 
+        # ---- Preview ----
         def update_preview():
-            name = entry_name.get().strip()
-            ks = ", ".join(chips) if chips else "(nenhuma keyword)"
-            path = entry_path.get().strip()
-            desc = entry_desc.get().strip() if 'entry_desc' in locals() else ""
-            t = "URL" if is_url(path) else ("Arquivo" if file_exists(path) else "(não válido)")
-            preview_lbl.configure(text=f"Preview:\n- Nome: {name or '(não definido)'}\n- Keywords: {ks}\n- Target: {t}\n- Descrição: {desc or '(sem descrição)'}")
+            n = entry_name.get().strip() or "(não definido)"
+            ks = ", ".join(chips) if chips else "(nenhuma)"
+            target = entry_path.get().strip()
+            target_type = "URL" if is_url(target) else "Arquivo" if file_exists(target) else "(inválido)"
+
+            preview.configure(text=f"Preview:\n- Nome: {n}\n- Keywords: {ks}\n- Target: {target_type}")
 
         entry_name.bind("<KeyRelease>", lambda e: update_preview())
-        entry_kw.bind("<KeyRelease>", lambda e: None)  # handled by Enter
-        entry_path.bind("<KeyRelease>", lambda e: update_preview())
-        entry_desc.bind("<KeyRelease>", lambda e: update_preview)
 
-        # Test and Save buttons
-        actions_row = ctk.CTkFrame(content, fg_color="transparent")
-        actions_row.pack(fill="x", padx=12, pady=(6,12))
+        # ---- Recentes ----
+        recent_label = ctk.CTkLabel(main, text="Recentes:", anchor="w", text_color="#a8b3bd")
+        recent_label.pack(fill="x", padx=12, pady=(6, 2))
 
-        status_label = ctk.CTkLabel(actions_row, text="", anchor="w", text_color="#a8b3bd")
-        status_label.pack(side="left")
+        recent_frame = ctk.CTkFrame(main, fg_color="transparent")
+        recent_frame.pack(fill="x", padx=12, pady=(0,12))
 
-        def set_status(text, ok=True):
-            status_label.configure(text=text, text_color="#7bd389" if ok else "#ff7373")
-            # clear after 3s
-            win.after(3000, lambda: status_label.configure(text=""))
+        def load_recent():
+            data = load_json()
+            for w in recent_frame.winfo_children():
+                w.destroy()
 
-        def test_command():
-            target = entry_path.get().strip()
-            if is_url(target):
-                try:
-                    webbrowser.open(target)
-                    set_status("URL aberta (teste).", ok=True)
-                except Exception as e:
-                    set_status(f"Erro ao abrir URL: {e}", ok=False)
-            elif file_exists(target):
-                try:
-                    subprocess.Popen(target, shell=True)
-                    set_status("Programa iniciado (teste).", ok=True)
-                except Exception as e:
-                    set_status(f"Erro ao executar: {e}", ok=False)
+            for name in data.get("recent", []):
+                btn = ctk.CTkButton(
+                    recent_frame, 
+                    text=name, 
+                    width=120,
+                    command=lambda n=name: fill_recent(n)
+                )
+                btn.pack(side="left", padx=6)
+
+        def fill_recent(name):
+            data = load_json()
+            for c in data.get("commands", []):
+                if c.get("name") == name:
+                    entry_name.delete(0,"end")
+                    entry_name.insert(0, name)
+
+                    chips.clear()
+                    chips.extend(c.get("keywords", []))
+                    redraw_chips()
+
+                    if c["type"] == "internal":
+                        entry_path.delete(0,"end")
+                        entry_path.insert(0, c.get("path",""))
+                    else:
+                        entry_path.delete(0,"end")
+                        entry_path.insert(0, c.get("url",""))
+
+                    detect_type()
+                    break
+
+        load_recent()
+        update_preview()
+
+        # ---------------------------
+        # Rodapé: Testar / Salvar
+        # ---------------------------
+        footer = ctk.CTkFrame(win, fg_color="transparent")
+        footer.pack(fill="x", padx=12, pady=12)
+
+        status = ctk.CTkLabel(footer, text="", anchor="w", text_color="#a8b3bd")
+        status.pack(side="left")
+
+        def set_status(msg, ok=True):
+            status.configure(text=msg, text_color="#7bd389" if ok else "#ff7373")
+            win.after(2500, lambda: status.configure(text=""))
+
+        # ---- Testar ----
+        def test_cmd():
+            tgt = entry_path.get().strip()
+            if is_url(tgt):
+                webbrowser.open(tgt)
+                set_status("URL aberta.")
+            elif file_exists(tgt):
+                subprocess.Popen(tgt, shell=True)
+                set_status("Programa iniciado.")
             else:
-                set_status("Target inválido para teste.", ok=False)
+                set_status("Destino inválido.", ok=False)
 
-        btn_test = ctk.CTkButton(actions_row, text="Testar", width=120, command=test_command)
-        btn_test.pack(side="right", padx=(6,0))
+        ctk.CTkButton(footer, text="Testar", width=120, command=test_cmd).pack(side="right", padx=(6,0))
 
-        def validate_all():
+        # ---- Salvar ----
+        def save():
             name = entry_name.get().strip()
             if not name:
-                return False, "Nome obrigatório."
-            if any(c.get("name") == name for c in load_commands_json().get("commands", [])):
-                return False, "Já existe um comando com esse nome."
-            if not chips:
-                return False, "Adicione ao menos uma palavra-chave."
-            targ = entry_path.get().strip()
-            if not targ:
-                return False, "Informe caminho ou URL."
-            if not (is_url(targ) or file_exists(targ)):
-                return False, "Caminho/URL inválido ou não encontrado."
-            return True, ""
+                return set_status("Nome obrigatório.", ok=False)
 
-        def save_command():
-            ok, msg = validate_all()
-            if not ok:
-                set_status(msg, ok=False)
-                return
-            name = entry_name.get().strip()
-            targ = entry_path.get().strip()
-            cmd_type = "external" if is_url(targ) else "internal"
-            cmd_data = {"type": cmd_type, "name": name, "keywords": chips.copy()}
-            if cmd_type == "internal":
-                cmd_data["path"] = targ
+            data = load_json()
+            if any(c.get("name")==name for c in data["commands"]):
+                return set_status("Nome já existe.", ok=False)
+
+            if not chips:
+                return set_status("Adicione keywords.", ok=False)
+
+            target = entry_path.get().strip()
+            if not target or not (is_url(target) or file_exists(target)):
+                return set_status("Destino inválido.", ok=False)
+
+            t = "external" if is_url(target) else "internal"
+            cmd_data = {
+                "name": name,
+                "keywords": chips.copy(),
+                "type": t
+            }
+
+            if t == "external":
+                cmd_data["url"] = target
             else:
-                cmd_data["url"] = targ
-            desc = entry_desc.get().strip() if 'entry_desc' in locals() else ""
-            if desc:
-                cmd_data["description"] = desc
+                cmd_data["path"] = target
+
             if win.selected_icon:
                 cmd_data["icon"] = win.selected_icon
-            # write
-            data = load_commands_json()
-            data.setdefault("commands", []).append(cmd_data)
-            save_commands_json(data)
+
+            data["commands"].append(cmd_data)
+            save_json(data)
             add_recent(name)
             load_recent()
-            set_status("Comando salvo com sucesso.", ok=True)
-            # add to engine in runtime
-            try:
-                if cmd_type == "internal":
-                    func = lambda path=targ: subprocess.Popen(path, shell=True)
-                else:
-                    func = lambda url=targ: webbrowser.open(url)
-                engine.commands[tuple(cmd_data["keywords"])] = func
-            except Exception:
-                pass
-            win.after(400, win.focus_force)
-            win.after(800, win.destroy)
 
-        btn_save = ctk.CTkButton(actions_row, text="Salvar", width=120, command=save_command)
-        btn_save.pack(side="right", padx=(6,0))
+            # Runtime
+            if t == "internal":
+                engine.commands[tuple(chips.copy())] = lambda p=target: subprocess.Popen(p, shell=True)
+            else:
+                engine.commands[tuple(chips.copy())] = lambda u=target: webbrowser.open(u)
 
-        # initial UI state
-        set_mode("simple")
-        redraw_chips()
-        update_preview()
-        detect_type_and_icon()
+            set_status("Comando salvo com sucesso!")
+            win.after(700, win.destroy)
 
-# ---------------------------
-# Tray Icon
-# ---------------------------
+        ctk.CTkButton(footer, text="Salvar", width=120, command=save).pack(side="right")
+
+    # ---------------------------
+    # Tray Icon
+    # ---------------------------
 def create_tray(app):
     def on_show(icon, item):
         app.deiconify()
