@@ -1,37 +1,42 @@
-# assistant_ui.py
+# UI / Tkinter
+import tkinter as tk
+from tkinter import (
+    filedialog,
+    messagebox,
+    Toplevel,
+    Frame,
+    Label,
+    Entry,
+    Button,
+    Radiobutton,
+    StringVar,
+    Text,
+    Scrollbar,
+    END,
+    RIGHT,
+    Y,
+    LEFT,
+    BOTH,
+)
+
+# CustomTkinter
 import customtkinter as ctk
-import threading
-import subprocess
-import webbrowser
+
+# Sistema / Utilidades
 import os
 import json
+import subprocess
+import webbrowser
+import threading
+from urllib.parse import urlparse
+# Ícone da tray
 from pystray import Icon, MenuItem, Menu
-from PIL import Image
-from tkinter import filedialog, messagebox
-from tkinter import Toplevel, Text, Scrollbar, END, RIGHT, Y, LEFT, BOTH, Frame
-from tkinter import Toplevel, Label, Entry, Button, Radiobutton, StringVar, filedialog, messagebox
-import tkinter as tk
+# Imagens
+from PIL import Image, ImageTk
+# Núcleo de comandos
 from core.orchestrator import Orchestrator
 
-import customtkinter as ctk
-from tkinter import filedialog, messagebox, Frame, Label
-import os
-import json
-import subprocess
-import webbrowser
-from urllib.parse import urlparse
-from PIL import Image, ImageTk
 
-# ---------------------------
-# CommandEngine
-# ---------------------------
-
-# ---------------------------
-# UI: Lynx
-# ---------------------------
-# ---------------------------
-# UI: Lynx (versão aprimorada)
-# ---------------------------
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
 
