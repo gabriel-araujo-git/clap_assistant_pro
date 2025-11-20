@@ -279,11 +279,11 @@ class LynxApp(ctk.CTk):
             return None
 
         def load_json():
-            if not os.path.exists("commands.json"):
-                with open("commands.json", "w", encoding="utf-8") as f:
+            if not os.path.exists("data/commands.json"):
+                with open("data/commands.json", "w", encoding="utf-8") as f:
                     json.dump({"commands": [], "recent": []}, f, indent=4, ensure_ascii=False)
 
-            with open("commands.json", "r", encoding="utf-8") as f:
+            with open("data/commands.json", "r", encoding="utf-8") as f:
                 try:
                     return json.load(f)
                 except json.JSONDecodeError:
