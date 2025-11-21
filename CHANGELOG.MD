@@ -17,6 +17,23 @@ e adota o <a href="https://semver.org/lang/pt-BR/">Versionamento Semântico</a> 
 Cada versão registrada representa um marco funcional, técnico e visual do Lynx Assistant.
 
 ---
+
+## [1.2.1] – 2025-11-20
+
+### Added
+- Implementado o novo **Command Engine baseado em JSON**, permitindo definição estruturada e expansível de comandos.
+- Criado o **Command Orchestrator** para gerenciar a execução dos comandos JSON, melhorando a arquitetura interna.
+  *(commit: #33 – feat(core): implement JSON-based command engine and orchestrator)*
+
+### Changed
+- Refatoração ampla dos imports do projeto, removendo duplicações e comentários desnecessários para melhorar organização e manutenção.
+  *(commit: #34 – Refactor imports and remove unnecessary comments)*
+
+### Fixed
+- Corrigido o caminho do arquivo JSON utilizado pela função `load_json`, garantindo carregamento correto dos comandos.
+  *(commit: #35 – Update JSON file path in load_json function)*
+
+
 ## [1.2.0] – 2025-11-14
 
 ### Added  
